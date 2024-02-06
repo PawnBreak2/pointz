@@ -6,7 +6,7 @@ import '../../features/map-page/presentation/widgets/pages/map_page.dart';
 
 class NavigationConfiguration {
   static final GoRouter routes = GoRouter(
-    initialLocation: '/',
+    initialLocation: '/map',
     routes: [
       GoRoute(
         path: '/',

@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:pointz/common/models/errors/location_error_model.dart';
+import 'package:pointz/common/models/errors/core_location_error_model.dart';
 import 'package:pointz/features/splash-page/data/data_sources/local/permission_data_source.dart';
 import 'package:pointz/features/splash-page/presentation/utils/splash_page_strings.dart';
 

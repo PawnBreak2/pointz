@@ -9,6 +9,7 @@ class MarkersListNotifier extends Notifier<Set<Marker>> {
 
   void addMarker(Marker marker) {
     state = {...state, marker};
+    print(state);
   }
 
   void removeMarkerById(String id) {
