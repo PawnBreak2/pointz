@@ -12,8 +12,9 @@ class RemoteApiRepository {
 
   RemoteApiRepository({required this.remoteApiDataSource});
 
-  Future<Either<NetworkError, MarkerPoint>> saveMarker(
-      MarkerPoint markerPoint) async {
+  /// Saves the marker to the remote API and returns the marker [int] id
+
+  Future<Either<NetworkError, int>> saveMarker(MarkerPoint markerPoint) async {
     final resp = await remoteApiDataSource.saveMarker(markerPoint.toJson());
 
     return resp.fold(
@@ -31,7 +32,8 @@ class RemoteApiRepository {
         return Left(NetworkError(MapPageStrings.genericNetworkError));
       },
       (data) {
-        return Right(MarkerPoint.fromJson(data));
+        int id = data['id'];
+        return Right(id);
       },
     );
   }
@@ -60,8 +62,9 @@ class RemoteApiRepository {
   }
 
   Future<Either<NetworkError, MarkerPoint>> updateMarker(
-      String id, Map<String, dynamic> data) async {
-    final resp = await remoteApiDataSource.updateMarker(id, data);
+      int id, MarkerPoint data) async {
+    final resp =
+        await remoteApiDataSource.updateMarker(id.toString(), data.toJson());
 
     return resp.fold(
       (exception) {
@@ -83,8 +86,8 @@ class RemoteApiRepository {
     );
   }
 
-  Future<Either<NetworkError, MarkerPoint>> getMarkerDetails(String id) async {
-    final resp = await remoteApiDataSource.getMarkerDetails(id);
+  Future<Either<NetworkError, MarkerPoint>> getMarkerDetails(int id) async {
+    final resp = await remoteApiDataSource.getMarkerDetails(id.toString());
 
     return resp.fold(
       (exception) {
@@ -106,8 +109,8 @@ class RemoteApiRepository {
     );
   }
 
-  Future<Either<NetworkError, MarkerPoint>> deleteMarker(String id) async {
-    final resp = await remoteApiDataSource.deleteMarker(id);
+  Future<Either<NetworkError, MarkerPoint>> deleteMarker(int id) async {
+    final resp = await remoteApiDataSource.deleteMarker(id.toString());
 
     return resp.fold(
       (exception) {
