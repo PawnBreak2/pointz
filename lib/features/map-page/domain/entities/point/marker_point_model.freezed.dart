@@ -20,7 +20,7 @@ MarkerPoint _$MarkerPointFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$MarkerPoint {
-  int get id => throw _privateConstructorUsedError;
+  int? get id => throw _privateConstructorUsedError;
   String get label => throw _privateConstructorUsedError;
   double get lat => throw _privateConstructorUsedError;
   double get lng => throw _privateConstructorUsedError;
@@ -37,7 +37,7 @@ abstract class $MarkerPointCopyWith<$Res> {
           MarkerPoint value, $Res Function(MarkerPoint) then) =
       _$MarkerPointCopyWithImpl<$Res, MarkerPoint>;
   @useResult
-  $Res call({int id, String label, double lat, double lng});
+  $Res call({int? id, String label, double lat, double lng});
 }
 
 /// @nodoc
@@ -53,16 +53,16 @@ class _$MarkerPointCopyWithImpl<$Res, $Val extends MarkerPoint>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? label = null,
     Object? lat = null,
     Object? lng = null,
   }) {
     return _then(_value.copyWith(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       label: null == label
           ? _value.label
           : label // ignore: cast_nullable_to_non_nullable
@@ -87,7 +87,7 @@ abstract class _$$MarkerPointImplCopyWith<$Res>
       __$$MarkerPointImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String label, double lat, double lng});
+  $Res call({int? id, String label, double lat, double lng});
 }
 
 /// @nodoc
@@ -101,16 +101,16 @@ class __$$MarkerPointImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? label = null,
     Object? lat = null,
     Object? lng = null,
   }) {
     return _then(_$MarkerPointImpl(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       label: null == label
           ? _value.label
           : label // ignore: cast_nullable_to_non_nullable
@@ -128,7 +128,8 @@ class __$$MarkerPointImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-@JsonSerializable()
+
+@JsonSerializable(includeIfNull: false)
 class _$MarkerPointImpl with DiagnosticableTreeMixin implements _MarkerPoint {
   const _$MarkerPointImpl(
       {required this.id,
@@ -140,7 +141,7 @@ class _$MarkerPointImpl with DiagnosticableTreeMixin implements _MarkerPoint {
       _$$MarkerPointImplFromJson(json);
 
   @override
-  final int id;
+  final int? id;
   @override
   final String label;
   @override
@@ -195,7 +196,7 @@ class _$MarkerPointImpl with DiagnosticableTreeMixin implements _MarkerPoint {
 
 abstract class _MarkerPoint implements MarkerPoint {
   const factory _MarkerPoint(
-      {required final int id,
+      {required final int? id,
       required final String label,
       required final double lat,
       required final double lng}) = _$MarkerPointImpl;
@@ -204,7 +205,7 @@ abstract class _MarkerPoint implements MarkerPoint {
       _$MarkerPointImpl.fromJson;
 
   @override
-  int get id;
+  int? get id;
   @override
   String get label;
   @override

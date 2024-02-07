@@ -71,7 +71,7 @@ class RemoteApiNotifier extends Notifier<NetworkRequestState> {
   Future updateMarker(MarkerPoint markerPoint) async {
     state = state.copyWith(isLoading: true);
     final resp =
-        await _remoteApiRepository.updateMarker(markerPoint.id, markerPoint);
+        await _remoteApiRepository.updateMarker(markerPoint.id!, markerPoint);
 
     resp.fold((exception) {
       state = state.copyWith(

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pointz/features/map-page/presentation/controllers/marker_creation_provider.dart';
+import 'package:pointz/features/map-page/presentation/controllers/markers_list_provider.dart';
 import 'package:pointz/features/map-page/presentation/utils/map_page_strings.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -68,7 +69,8 @@ class _BottomSheetForMapScreenState
         ref
             .read(isTextEmptyBeforeSavingProvider.notifier)
             .update((state) => false);
-        // ref.read(remoteApiProvider.notifier).saveMarker();
+        ref.read(remoteApiProvider.notifier).saveMarker();
+        print(ref.read(markersListProvider));
         context.pop();
       }
     });

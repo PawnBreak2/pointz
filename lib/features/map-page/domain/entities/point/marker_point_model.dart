@@ -7,8 +7,9 @@ part 'marker_point_model.g.dart';
 
 @freezed
 class MarkerPoint with _$MarkerPoint {
+  @JsonSerializable(includeIfNull: false)
   const factory MarkerPoint({
-    required int id,
+    required int? id,
     required String label,
     required double lat,
     required double lng,

@@ -102,7 +102,9 @@ class _MapPageState extends ConsumerState<MapPage> {
                 initialCameraPosition: initialPosition,
                 onMapCreated: (GoogleMapController controller) {
                   print('Map created');
-                  _controller.complete(controller);
+                  if (!_controller.isCompleted) {
+                    _controller.complete(controller);
+                  }
                   ref.read(isLoadingProvider.notifier).update((state) => false);
                 },
                 onLongPress: onLongPress,

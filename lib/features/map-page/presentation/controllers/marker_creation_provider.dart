@@ -8,7 +8,7 @@ import '../../domain/entities/point/marker_point_model.dart';
 class MarkerPointCreationNotifier extends Notifier<MarkerPoint> {
   @override
   MarkerPoint build() {
-    return const MarkerPoint(id: 0, label: '', lat: 0, lng: 0);
+    return const MarkerPoint(id: null, label: '', lat: 0, lng: 0);
   }
 
   void setLabel(String label) {
@@ -24,7 +24,7 @@ class MarkerPointCreationNotifier extends Notifier<MarkerPoint> {
   }
 
   void clearMarkerPoint() {
-    state = const MarkerPoint(id: 0, label: '', lat: 0, lng: 0);
+    state = const MarkerPoint(id: null, label: '', lat: 0, lng: 0);
   }
 
   void addMarkerToList() {
