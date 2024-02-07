@@ -34,9 +34,7 @@ class LocationController extends AutoDisposeNotifier<LocationState> {
 
     // Just to show the loading indicator
 
-    await Future.delayed(Duration(seconds: 4), () {
-      state = state.copyWith(isLoading: false);
-    });
+    state = state.copyWith(isLoading: false);
   }
 }
 
