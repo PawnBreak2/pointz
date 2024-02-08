@@ -23,9 +23,15 @@ class DBService {
 CREATE TABLE markerPoints ( 
   id INTEGER PRIMARY KEY, 
   label TEXT NOT NULL,
-  lat REAL NOT NULL
+  lat REAL NOT NULL,
   lng REAL NOT NULL
   )
+''');
+
+    await db.execute('''
+CREATE TABLE favorites (
+  id TEXT PRIMARY KEY
+);
 ''');
   }
 }

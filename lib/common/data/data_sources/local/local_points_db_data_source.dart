@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:pointz/common/db_service/db.dart'; // Adjust the import path as necessary
 import 'package:sqflite/sqflite.dart';
 
-class LocalDbDataSource {
+class LocalPointsDbDataSource {
   Future<bool> saveMarker(Map<String, dynamic> markerPointJson) async {
     final db = await DBService.database;
     try {
@@ -12,6 +12,23 @@ class LocalDbDataSource {
     } catch (e) {
       return false;
     }
+  }
+
+  Future<bool> saveMarkers(List<Map<String, dynamic>> markersList) async {
+    final db = await DBService.database;
+    return await db.transaction((txn) async {
+      try {
+        await txn.delete('markerPoints');
+
+        for (var marker in markersList) {
+          await txn.insert('markerPoints', marker,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+        return true; // Success
+      } catch (e) {
+        return false; // Something went wrong, transaction is rolled back
+      }
+    });
   }
 
   Future<Either<bool, List<Map<String, dynamic>>>> getMarkers() async {

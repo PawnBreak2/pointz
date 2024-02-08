@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:pointz/common/presentation/controllers/local_points_db_provider.dart';
 import 'package:pointz/features/points_in_map/presentation/controllers/points_in_map_marker_detail_provider.dart';
 
 import '../../../features/points_in_map/domain/entities/point/marker_point_model.dart';
@@ -29,7 +30,7 @@ class RemoteApiNotifier extends Notifier<NetworkRequestState> {
     resp.fold((exception) {
       state = state.copyWith(
           errorMessage: exception.message, isError: true, data: null);
-    }, (id) {
+    }, (id) async {
       state = state.copyWith(isError: false, errorMessage: null, data: id);
 
       // Creates the marker with the same values as the markerPointToSave and the new id, and adds it to the markers list
@@ -42,8 +43,18 @@ class RemoteApiNotifier extends Notifier<NetworkRequestState> {
         infoWindow: InfoWindow(title: title),
         position: position,
       );
-
-      ref.read(markersListProvider.notifier).addMarker(markerToAddToList);
+      bool localDbResp = await ref
+          .read(localDbProvider.notifier)
+          .saveMarker(markerPointToSave);
+      if (localDbResp) {
+        ref.read(markersListProvider.notifier).addMarker(markerToAddToList);
+        clearState();
+      } else {
+        state = state.copyWith(
+            isError: true,
+            data: null,
+            errorMessage: 'Non è stato possibile salvare il marker in locale');
+      }
     });
   }
 
@@ -67,9 +78,8 @@ class RemoteApiNotifier extends Notifier<NetworkRequestState> {
               ))
           .toSet();
       ref.read(markersListProvider.notifier).addMarkersList(mapMarkersToAdd);
+      clearState();
     });
-    state = state.copyWith(isLoading: false);
-    clearState();
   }
 
   Future deleteMarker(String id) async {
@@ -79,13 +89,21 @@ class RemoteApiNotifier extends Notifier<NetworkRequestState> {
     resp.fold((exception) {
       state = state.copyWith(
           errorMessage: exception.message, isError: true, data: null);
-    }, (success) {
+    }, (success) async {
       state = state.copyWith(isError: false, errorMessage: null, data: success);
-      ref.read(markersListProvider.notifier).removeMarkerById(id);
+      bool localDbResp =
+          await ref.read(localDbProvider.notifier).deleteMarker(int.parse(id));
+      if (localDbResp) {
+        ref.read(markersListProvider.notifier).removeMarkerById(id);
+        clearState();
+      } else {
+        state = state.copyWith(
+            isError: true,
+            data: null,
+            errorMessage:
+                'Non è stato possibile cancellare il marker in locale');
+      }
     });
-
-    state = state.copyWith(isLoading: false);
-    clearState();
   }
 
   Future updateMarker(MarkerPoint markerPoint) async {
@@ -96,7 +114,7 @@ class RemoteApiNotifier extends Notifier<NetworkRequestState> {
     resp.fold((exception) {
       state = state.copyWith(
           errorMessage: exception.message, isError: true, data: null);
-    }, (data) {
+    }, (data) async {
       state = state.copyWith(isError: false, errorMessage: null, data: data);
       MarkerPoint markerPointToBeConverted = state.data;
       String id = markerPointToBeConverted.id.toString();
@@ -104,16 +122,24 @@ class RemoteApiNotifier extends Notifier<NetworkRequestState> {
       LatLng position =
           LatLng(markerPointToBeConverted.lat, markerPointToBeConverted.lng);
 
-      Marker mapMarkerToUpdate = Marker(
-        markerId: MarkerId(id),
-        infoWindow: InfoWindow(title: title),
-        position: position,
-      );
-
-      ref.read(markersListProvider.notifier).updateMarker(mapMarkerToUpdate);
+      bool localDbResp =
+          await ref.read(localDbProvider.notifier).updateMarker(data);
+      if (localDbResp) {
+        Marker mapMarkerToUpdate = Marker(
+          markerId: MarkerId(id),
+          infoWindow: InfoWindow(title: title),
+          position: position,
+        );
+        ref.read(markersListProvider.notifier).addMarker(mapMarkerToUpdate);
+        clearState();
+      } else {
+        state = state.copyWith(
+            isError: true,
+            data: null,
+            errorMessage:
+                'Non è stato possibile aggiornare il marker in locale');
+      }
     });
-    state = state.copyWith(isLoading: false);
-    clearState();
   }
 
   Future getMarkerDetails(int id) async {
@@ -126,7 +152,6 @@ class RemoteApiNotifier extends Notifier<NetworkRequestState> {
     }, (data) {
       state = state.copyWith(isError: false, errorMessage: null, data: data);
     });
-    state = state.copyWith(isLoading: true);
     clearState();
   }
 

@@ -30,6 +30,7 @@ class MapPage extends ConsumerStatefulWidget {
 }
 
 class _MapPageState extends ConsumerState<MapPage> {
+  GlobalKey mapWidgetKey = GlobalKey();
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
@@ -47,11 +48,18 @@ class _MapPageState extends ConsumerState<MapPage> {
     initialPosition = ref.read(userInitialPosition);
   }
 
-  void onLongPress(LatLng latLng) async {
+  onLongPress(LatLng latLng) async {
     final GoogleMapController localControllerInstance =
         await _controller.future;
+    var tapPosition = await localControllerInstance.getScreenCoordinate(latLng);
+    RenderBox mapWidgetRenderBox =
+        mapWidgetKey.currentContext!.findRenderObject() as RenderBox;
+    var mapWidgetPosition = mapWidgetRenderBox.localToGlobal(Offset.zero);
+    print(tapPosition);
 
-    double previousZoomLevel = await localControllerInstance.getZoomLevel();
+    double tapPositionX = tapPosition.x.toDouble() + mapWidgetPosition.dx;
+    double tapPositionY = tapPosition.y.toDouble() + mapWidgetPosition.dy;
+    var previousZoomLevel = await localControllerInstance.getZoomLevel();
 
     localControllerInstance.animateCamera(CameraUpdate.newCameraPosition(
         CameraPosition(
@@ -59,10 +67,8 @@ class _MapPageState extends ConsumerState<MapPage> {
 
     if (context.mounted) {
       showModalBottomSheet(
-          context: context, // This is the context before the async gap
-
+          context: context,
           builder: (BuildContext context) {
-            // This is a new context valid for the modal bottom sheet
             return BottomSheetForCreatingPoints(latLng: latLng);
           }).whenComplete(() {
         localControllerInstance.animateCamera(CameraUpdate.newCameraPosition(
@@ -148,6 +154,7 @@ class _MapPageState extends ConsumerState<MapPage> {
               height: 100.h,
               child: GoogleMap(
                 mapToolbarEnabled: false,
+                key: mapWidgetKey,
                 minMaxZoomPreference: const MinMaxZoomPreference(13, 15),
                 zoomControlsEnabled: false,
                 zoomGesturesEnabled: false,

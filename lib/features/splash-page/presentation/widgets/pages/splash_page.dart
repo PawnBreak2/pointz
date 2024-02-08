@@ -4,13 +4,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:pointz/common/presentation/controllers/local_favorites_db_provider.dart';
+import 'package:pointz/common/presentation/controllers/local_points_db_provider.dart';
 import 'package:pointz/common/presentation/controllers/remote_api_provider.dart';
 import 'package:pointz/common/presentation/utils/common_strings.dart';
+import 'package:pointz/features/splash-page/presentation/controllers/connectivity_checker.dart';
 import 'package:pointz/features/splash-page/presentation/utils/splash_page_strings.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../../../../common/domain/navigation/navigation_map.dart';
 import '../../../../../common/presentation/controllers/is_loading_provider.dart';
+import '../../../../../common/presentation/controllers/is_online_provider.dart';
 import '../../controllers/location_controller_provider.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
@@ -31,12 +35,24 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   }
 
   void init() async {
-    SchedulerBinding.instance!.addPostFrameCallback((_) {
+    SchedulerBinding.instance!.addPostFrameCallback((_) async {
+      List<Future> startupTasks;
       ref.read(isLoadingProvider.notifier).update((state) => true);
-      List<Future> startupTasks = [
-        ref.read(remoteApiProvider.notifier).getMarkers(),
-        ref.read(locationControllerProvider.notifier).getLocation()
-      ];
+      bool isOnline = await checkConnectivity();
+      ref.read(isOnlineProvider.notifier).update((state) => isOnline);
+
+      if (isOnline) {
+        startupTasks = [
+          ref.read(remoteApiProvider.notifier).getMarkers(),
+          ref.read(locationControllerProvider.notifier).getLocation(),
+          ref.read(localFavoritesProvider.notifier).getFavorites()
+        ];
+      } else {
+        startupTasks = [
+          ref.read(localDbProvider.notifier).getMarkers(),
+          ref.read(localFavoritesProvider.notifier).getFavorites()
+        ];
+      }
 
       Future.wait(startupTasks).whenComplete(() async {
         await Future.delayed(const Duration(seconds: 3));

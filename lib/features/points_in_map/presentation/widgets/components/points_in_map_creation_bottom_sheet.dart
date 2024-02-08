@@ -79,58 +79,63 @@ class _BottomSheetForMapScreenState
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 20.h,
-      width: 100.w,
-      child: Column(
-        children: [
-          const Expanded(flex: 1, child: SizedBox()),
-          const Expanded(flex: 3, child: Text('Come si chiama questo luogo?')),
-          Expanded(
-            flex: 5,
-            child: Consumer(
-              builder: (context, ref, child) {
-                if (_controller.text.isNotEmpty) {
-                  ref
-                      .read(isTextEmptyBeforeSavingProvider.notifier)
-                      .update((state) => false);
-                }
-                bool isTextEmptyBeforeSaving =
-                    ref.watch(isTextEmptyBeforeSavingProvider);
-                return TextField(
-                    focusNode: _focusNode,
-                    decoration: InputDecoration(
-                      labelStyle: isTextEmptyBeforeSaving
-                          ? TextStyle(color: Colors.blueGrey)
-                          : null,
-                      focusedBorder: isTextEmptyBeforeSaving
-                          ? Theme.of(context)
-                              .inputDecorationTheme
-                              .enabledBorder!
-                              .copyWith(
-                                  borderSide: BorderSide(color: Colors.red))
-                          : null,
-                      labelText: isTextEmptyBeforeSaving
-                          ? MapPageStrings.insertPlaceNameLabelEmpty
-                          : MapPageStrings.insertPlaceNameLabel,
-                    ),
-                    controller: _controller);
-              },
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: InkWell(
-                onTap: () {
-                  context.pop(); // Uses the context provided to the builder
+    return Padding(
+      padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom * 0.81),
+      child: SizedBox(
+        height: 20.h,
+        width: 100.w,
+        child: Column(
+          children: [
+            const Expanded(flex: 1, child: SizedBox()),
+            const Expanded(
+                flex: 3, child: Text('Come si chiama questo luogo?')),
+            Expanded(
+              flex: 5,
+              child: Consumer(
+                builder: (context, ref, child) {
+                  if (_controller.text.isNotEmpty) {
+                    ref
+                        .read(isTextEmptyBeforeSavingProvider.notifier)
+                        .update((state) => false);
+                  }
+                  bool isTextEmptyBeforeSaving =
+                      ref.watch(isTextEmptyBeforeSavingProvider);
+                  return TextField(
+                      focusNode: _focusNode,
+                      decoration: InputDecoration(
+                        labelStyle: isTextEmptyBeforeSaving
+                            ? TextStyle(color: Colors.blueGrey)
+                            : null,
+                        focusedBorder: isTextEmptyBeforeSaving
+                            ? Theme.of(context)
+                                .inputDecorationTheme
+                                .enabledBorder!
+                                .copyWith(
+                                    borderSide: BorderSide(color: Colors.red))
+                            : null,
+                        labelText: isTextEmptyBeforeSaving
+                            ? MapPageStrings.insertPlaceNameLabelEmpty
+                            : MapPageStrings.insertPlaceNameLabel,
+                      ),
+                      controller: _controller);
                 },
-                child: ElevatedButton(
-                  onPressed: onPressedSaveButton,
-                  child: const Text('Salva'),
-                )),
-          ),
-          const Expanded(flex: 2, child: SizedBox()),
-        ],
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: InkWell(
+                  onTap: () {
+                    context.pop(); // Uses the context provided to the builder
+                  },
+                  child: ElevatedButton(
+                    onPressed: onPressedSaveButton,
+                    child: const Text('Salva'),
+                  )),
+            ),
+            const Expanded(flex: 2, child: SizedBox()),
+          ],
+        ),
       ),
     );
   }

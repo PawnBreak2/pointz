@@ -35,14 +35,12 @@ class _BottomSheetForMapScreenState
   late TextEditingController _controller;
   late double lat;
   late double lng;
-  late FocusNode _focusNode;
 
   @override
   void initState() {
     lat = widget.latLng.latitude;
     lng = widget.latLng.longitude;
-    _focusNode = FocusNode();
-    _focusNode.requestFocus();
+
     SchedulerBinding.instance!.addPostFrameCallback((_) {
       ref.read(markerPointCreationProvider.notifier).setLatAndLng(lat, lng);
     });
@@ -80,7 +78,6 @@ class _BottomSheetForMapScreenState
   @override
   void dispose() {
     _controller.dispose();
-    _focusNode.dispose();
     super.dispose();
   }
 
@@ -111,7 +108,11 @@ class _BottomSheetForMapScreenState
   }
 
   void onPressedFavoriteButton(String id) async {
-    ref.read(favoritesListProvider.notifier).addFavorite(id);
+    if (ref.read(favoritesListProvider.notifier).checkIfFavorite(id)) {
+      ref.read(favoritesListProvider.notifier).removeFavorite(id);
+    } else {
+      ref.read(favoritesListProvider.notifier).addFavorite(id);
+    }
   }
 
   void onPressedDeleteButton(String id) async {
@@ -121,125 +122,134 @@ class _BottomSheetForMapScreenState
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 30.h,
-      width: 100.w,
-      child: Column(
-        children: [
-          const Expanded(flex: 1, child: SizedBox()),
-          Expanded(
-            flex: 3,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.location_on),
-                Text(widget.latLng.longitude.toString().substring(0, 7)),
-                VerticalDivider(indent: 2.h, endIndent: 2.h),
-                Text(widget.latLng.latitude.toString().substring(0, 7)),
-              ],
+    double keyboardPadding = MediaQuery.of(context).viewInsets.bottom;
+    print(keyboardPadding);
+    return Padding(
+      padding: EdgeInsets.only(bottom: keyboardPadding),
+      child: SizedBox(
+        height: 30.h,
+        width: 100.w,
+        child: Column(
+          children: [
+            const Expanded(flex: 1, child: SizedBox()),
+            Expanded(
+              flex: 3,
+              child: !(keyboardPadding > 10)
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.location_on),
+                        Text(
+                            widget.latLng.longitude.toString().substring(0, 7)),
+                        VerticalDivider(indent: 2.h, endIndent: 2.h),
+                        Text(widget.latLng.latitude.toString().substring(0, 7)),
+                      ],
+                    )
+                  : SizedBox(),
             ),
-          ),
-          Expanded(
-            flex: 5,
-            child: Consumer(
-              builder: (context, ref, child) {
-                if (_controller.text.isNotEmpty) {
-                  ref
-                      .read(isTextEmptyBeforeSavingProvider.notifier)
-                      .update((state) => false);
-                }
-                bool isTextEmptyBeforeSaving =
-                    ref.watch(isTextEmptyBeforeSavingProvider);
-                bool isTextEqualDuringUpdate =
-                    ref.watch(isTextEqualDuringUpdateProvider);
-                return Consumer(
-                  builder: (context, ref, child) {
-                    _controller.text =
-                        ref.read(markerPointDetailProvider).label;
-                    return Builder(builder: (context) {
-                      String labelText = '';
-                      if (isTextEqualDuringUpdate) {
-                        labelText = MapPageStrings.detailPlaceNameLabelEqual;
-                      } else if (isTextEmptyBeforeSaving) {
-                        labelText = MapPageStrings.detailPlaceNameLabelEmpty;
-                      } else {
-                        labelText = MapPageStrings.detailPlaceNameLabel;
-                      }
-                      return TextField(
-                          focusNode: _focusNode,
-                          decoration: InputDecoration(
-                              labelStyle: (isTextEmptyBeforeSaving ||
-                                      isTextEqualDuringUpdate)
-                                  ? TextStyle(color: Colors.blueGrey)
-                                  : null,
-                              focusedBorder: (isTextEmptyBeforeSaving ||
-                                      isTextEqualDuringUpdate)
-                                  ? Theme.of(context)
-                                      .inputDecorationTheme
-                                      .enabledBorder!
-                                      .copyWith(
-                                          borderSide:
-                                              BorderSide(color: Colors.red))
-                                  : null,
-                              labelText: labelText),
-                          controller: _controller);
-                    });
-                  },
-                );
-              },
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                InkWell(
-                    onTap: () {
-                      context.pop(); // Uses the context provided to the builder
-                    },
-                    child: ElevatedButton(
-                      onPressed: onPressedUpdateButton,
-                      child: const Text('Modifica'),
-                    )),
-                InkWell(
-                  onTap: () {
-                    context.pop(); // Uses the context provided to the builder
-                  },
-                  child: Consumer(
+            Expanded(
+              flex: 5,
+              child: Consumer(
+                builder: (context, ref, child) {
+                  if (_controller.text.isNotEmpty) {
+                    ref
+                        .read(isTextEmptyBeforeSavingProvider.notifier)
+                        .update((state) => false);
+                  }
+                  bool isTextEmptyBeforeSaving =
+                      ref.watch(isTextEmptyBeforeSavingProvider);
+                  bool isTextEqualDuringUpdate =
+                      ref.watch(isTextEqualDuringUpdateProvider);
+                  return Consumer(
                     builder: (context, ref, child) {
-                      String markerIdToAddToFavorites =
-                          ref.read(markerPointDetailProvider).id.toString();
-                      bool isFavorite = ref.watch(favoritesListProvider).any(
-                          (element) => element == markerIdToAddToFavorites);
-
-                      return ElevatedButton(
-                        onPressed: () =>
-                            onPressedFavoriteButton(markerIdToAddToFavorites),
-                        child: Icon(isFavorite
-                            ? Icons.favorite
-                            : Icons.favorite_border),
-                      );
+                      _controller.text =
+                          ref.read(markerPointDetailProvider).label;
+                      return Builder(builder: (context) {
+                        String labelText = '';
+                        if (isTextEqualDuringUpdate) {
+                          labelText = MapPageStrings.detailPlaceNameLabelEqual;
+                        } else if (isTextEmptyBeforeSaving) {
+                          labelText = MapPageStrings.detailPlaceNameLabelEmpty;
+                        } else {
+                          labelText = MapPageStrings.detailPlaceNameLabel;
+                        }
+                        return TextField(
+                            decoration: InputDecoration(
+                                labelStyle: (isTextEmptyBeforeSaving ||
+                                        isTextEqualDuringUpdate)
+                                    ? TextStyle(color: Colors.blueGrey)
+                                    : null,
+                                focusedBorder: (isTextEmptyBeforeSaving ||
+                                        isTextEqualDuringUpdate)
+                                    ? Theme.of(context)
+                                        .inputDecorationTheme
+                                        .enabledBorder!
+                                        .copyWith(
+                                            borderSide:
+                                                BorderSide(color: Colors.red))
+                                    : null,
+                                labelText: labelText),
+                            controller: _controller);
+                      });
                     },
-                  ),
-                ),
-                InkWell(
+                  );
+                },
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  InkWell(
+                      onTap: () {
+                        context
+                            .pop(); // Uses the context provided to the builder
+                      },
+                      child: ElevatedButton(
+                        onPressed: onPressedUpdateButton,
+                        child: const Text('Modifica'),
+                      )),
+                  InkWell(
                     onTap: () {
                       context.pop(); // Uses the context provided to the builder
                     },
-                    child: ElevatedButton(
-                      onPressed: () {
-                        String markerIdToDelete =
+                    child: Consumer(
+                      builder: (context, ref, child) {
+                        String markerIdToAddToFavorites =
                             ref.read(markerPointDetailProvider).id.toString();
-                        onPressedDeleteButton(markerIdToDelete);
+                        bool isFavorite = ref.watch(favoritesListProvider).any(
+                            (element) => element == markerIdToAddToFavorites);
+
+                        return ElevatedButton(
+                          onPressed: () =>
+                              onPressedFavoriteButton(markerIdToAddToFavorites),
+                          child: Icon(isFavorite
+                              ? Icons.favorite
+                              : Icons.favorite_border),
+                        );
                       },
-                      child: Icon(Icons.delete_forever_rounded),
-                    )),
-              ],
+                    ),
+                  ),
+                  InkWell(
+                      onTap: () {
+                        context
+                            .pop(); // Uses the context provided to the builder
+                      },
+                      child: ElevatedButton(
+                        onPressed: () {
+                          String markerIdToDelete =
+                              ref.read(markerPointDetailProvider).id.toString();
+                          onPressedDeleteButton(markerIdToDelete);
+                        },
+                        child: Icon(Icons.delete_forever_rounded),
+                      )),
+                ],
+              ),
             ),
-          ),
-          const Expanded(flex: 2, child: SizedBox()),
-        ],
+            const Expanded(flex: 2, child: SizedBox()),
+          ],
+        ),
       ),
     );
   }
