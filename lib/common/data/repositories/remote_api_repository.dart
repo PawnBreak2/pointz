@@ -8,14 +8,15 @@ import '../../domain/models/errors/core_network_error_model.dart';
 import '../data_sources/remote/remote_api_data_source.dart';
 
 class RemoteApiRepository {
-  final RemoteApiDataSource remoteApiDataSource;
+  final RemoteApiDataSource _remoteApiDataSource;
 
-  RemoteApiRepository({required this.remoteApiDataSource});
+  RemoteApiRepository({required remoteApiDataSource})
+      : _remoteApiDataSource = remoteApiDataSource;
 
   /// Saves the marker to the remote API and returns the marker [int] id
 
   Future<Either<NetworkError, int>> saveMarker(MarkerPoint markerPoint) async {
-    final resp = await remoteApiDataSource.saveMarker(markerPoint.toJson());
+    final resp = await _remoteApiDataSource.saveMarker(markerPoint.toJson());
 
     return resp.fold(
       (exception) {
@@ -39,7 +40,7 @@ class RemoteApiRepository {
   }
 
   Future<Either<NetworkError, List<MarkerPoint>>> getMarkers() async {
-    final resp = await remoteApiDataSource.getMarkers();
+    final resp = await _remoteApiDataSource.getMarkers();
 
     return resp.fold(
       (exception) {
@@ -66,7 +67,7 @@ class RemoteApiRepository {
   Future<Either<NetworkError, MarkerPoint>> updateMarker(
       int id, MarkerPoint data) async {
     final resp =
-        await remoteApiDataSource.updateMarker(id.toString(), data.toJson());
+        await _remoteApiDataSource.updateMarker(id.toString(), data.toJson());
 
     return resp.fold(
       (exception) {
@@ -89,7 +90,7 @@ class RemoteApiRepository {
   }
 
   Future<Either<NetworkError, MarkerPoint>> getMarkerDetails(int id) async {
-    final resp = await remoteApiDataSource.getMarkerDetails(id.toString());
+    final resp = await _remoteApiDataSource.getMarkerDetails(id.toString());
 
     return resp.fold(
       (exception) {
@@ -112,7 +113,7 @@ class RemoteApiRepository {
   }
 
   Future<Either<NetworkError, bool>> deleteMarker(String id) async {
-    final resp = await remoteApiDataSource.deleteMarker(id);
+    final resp = await _remoteApiDataSource.deleteMarker(id);
 
     return resp.fold(
       (exception) {

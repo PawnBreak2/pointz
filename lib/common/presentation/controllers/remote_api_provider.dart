@@ -56,7 +56,6 @@ class RemoteApiNotifier extends Notifier<NetworkRequestState> {
       state = state.copyWith(
           errorMessage: exception.message, isError: true, data: null);
     }, (data) {
-      print(data);
       state = state.copyWith(isError: false, errorMessage: null, data: data);
       List<MarkerPoint> markerPointsToBeConverted = List.from(state.data);
       Set<Marker> mapMarkersToAdd = markerPointsToBeConverted
@@ -90,7 +89,6 @@ class RemoteApiNotifier extends Notifier<NetworkRequestState> {
   }
 
   Future updateMarker(MarkerPoint markerPoint) async {
-    print('updating marker');
     state = state.copyWith(isLoading: true);
     final resp =
         await _remoteApiRepository.updateMarker(markerPoint.id!, markerPoint);
@@ -111,7 +109,7 @@ class RemoteApiNotifier extends Notifier<NetworkRequestState> {
         infoWindow: InfoWindow(title: title),
         position: position,
       );
-      print('here');
+
       ref.read(markersListProvider.notifier).updateMarker(mapMarkerToUpdate);
     });
     state = state.copyWith(isLoading: false);

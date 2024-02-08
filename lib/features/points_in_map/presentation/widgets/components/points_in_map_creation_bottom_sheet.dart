@@ -71,7 +71,7 @@ class _BottomSheetForMapScreenState
             .read(isTextEmptyBeforeSavingProvider.notifier)
             .update((state) => false);
         ref.read(remoteApiProvider.notifier).saveMarker();
-        print(ref.read(markersListProvider));
+
         context.pop();
       }
     });

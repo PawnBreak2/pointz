@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'core_network_request_state_model.dart';
+part of 'core_local_db_request_state_model.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,30 +15,29 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
-mixin _$NetworkRequestState {
+mixin _$LocalDbRequestState {
   bool get isLoading => throw _privateConstructorUsedError;
   bool get isError => throw _privateConstructorUsedError;
   dynamic get data => throw _privateConstructorUsedError;
-  String? get errorMessage => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
-  $NetworkRequestStateCopyWith<NetworkRequestState> get copyWith =>
+  $LocalDbRequestStateCopyWith<LocalDbRequestState> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $NetworkRequestStateCopyWith<$Res> {
-  factory $NetworkRequestStateCopyWith(
-          NetworkRequestState value, $Res Function(NetworkRequestState) then) =
-      _$NetworkRequestStateCopyWithImpl<$Res, NetworkRequestState>;
+abstract class $LocalDbRequestStateCopyWith<$Res> {
+  factory $LocalDbRequestStateCopyWith(
+          LocalDbRequestState value, $Res Function(LocalDbRequestState) then) =
+      _$LocalDbRequestStateCopyWithImpl<$Res, LocalDbRequestState>;
   @useResult
-  $Res call({bool isLoading, bool isError, dynamic data, String? errorMessage});
+  $Res call({bool isLoading, bool isError, dynamic data});
 }
 
 /// @nodoc
-class _$NetworkRequestStateCopyWithImpl<$Res, $Val extends NetworkRequestState>
-    implements $NetworkRequestStateCopyWith<$Res> {
-  _$NetworkRequestStateCopyWithImpl(this._value, this._then);
+class _$LocalDbRequestStateCopyWithImpl<$Res, $Val extends LocalDbRequestState>
+    implements $LocalDbRequestStateCopyWith<$Res> {
+  _$LocalDbRequestStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -51,7 +50,6 @@ class _$NetworkRequestStateCopyWithImpl<$Res, $Val extends NetworkRequestState>
     Object? isLoading = null,
     Object? isError = null,
     Object? data = freezed,
-    Object? errorMessage = freezed,
   }) {
     return _then(_value.copyWith(
       isLoading: null == isLoading
@@ -66,31 +64,27 @@ class _$NetworkRequestStateCopyWithImpl<$Res, $Val extends NetworkRequestState>
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
               as dynamic,
-      errorMessage: freezed == errorMessage
-          ? _value.errorMessage
-          : errorMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$NetworkRequestStateImplCopyWith<$Res>
-    implements $NetworkRequestStateCopyWith<$Res> {
-  factory _$$NetworkRequestStateImplCopyWith(_$NetworkRequestStateImpl value,
-          $Res Function(_$NetworkRequestStateImpl) then) =
-      __$$NetworkRequestStateImplCopyWithImpl<$Res>;
+abstract class _$$LocalDbRequestStateImplCopyWith<$Res>
+    implements $LocalDbRequestStateCopyWith<$Res> {
+  factory _$$LocalDbRequestStateImplCopyWith(_$LocalDbRequestStateImpl value,
+          $Res Function(_$LocalDbRequestStateImpl) then) =
+      __$$LocalDbRequestStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool isLoading, bool isError, dynamic data, String? errorMessage});
+  $Res call({bool isLoading, bool isError, dynamic data});
 }
 
 /// @nodoc
-class __$$NetworkRequestStateImplCopyWithImpl<$Res>
-    extends _$NetworkRequestStateCopyWithImpl<$Res, _$NetworkRequestStateImpl>
-    implements _$$NetworkRequestStateImplCopyWith<$Res> {
-  __$$NetworkRequestStateImplCopyWithImpl(_$NetworkRequestStateImpl _value,
-      $Res Function(_$NetworkRequestStateImpl) _then)
+class __$$LocalDbRequestStateImplCopyWithImpl<$Res>
+    extends _$LocalDbRequestStateCopyWithImpl<$Res, _$LocalDbRequestStateImpl>
+    implements _$$LocalDbRequestStateImplCopyWith<$Res> {
+  __$$LocalDbRequestStateImplCopyWithImpl(_$LocalDbRequestStateImpl _value,
+      $Res Function(_$LocalDbRequestStateImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -99,9 +93,8 @@ class __$$NetworkRequestStateImplCopyWithImpl<$Res>
     Object? isLoading = null,
     Object? isError = null,
     Object? data = freezed,
-    Object? errorMessage = freezed,
   }) {
-    return _then(_$NetworkRequestStateImpl(
+    return _then(_$LocalDbRequestStateImpl(
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
@@ -114,24 +107,17 @@ class __$$NetworkRequestStateImplCopyWithImpl<$Res>
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
               as dynamic,
-      errorMessage: freezed == errorMessage
-          ? _value.errorMessage
-          : errorMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
     ));
   }
 }
 
 /// @nodoc
 
-class _$NetworkRequestStateImpl
+class _$LocalDbRequestStateImpl
     with DiagnosticableTreeMixin
-    implements _NetworkRequestState {
-  const _$NetworkRequestStateImpl(
-      {this.isLoading = false,
-      this.isError = false,
-      this.data,
-      this.errorMessage});
+    implements _LocalDbRequestState {
+  const _$LocalDbRequestStateImpl(
+      {this.isLoading = false, this.isError = false, this.data});
 
   @override
   @JsonKey()
@@ -141,56 +127,50 @@ class _$NetworkRequestStateImpl
   final bool isError;
   @override
   final dynamic data;
-  @override
-  final String? errorMessage;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'NetworkRequestState(isLoading: $isLoading, isError: $isError, data: $data, errorMessage: $errorMessage)';
+    return 'LocalDbRequestState(isLoading: $isLoading, isError: $isError, data: $data)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-      ..add(DiagnosticsProperty('type', 'NetworkRequestState'))
+      ..add(DiagnosticsProperty('type', 'LocalDbRequestState'))
       ..add(DiagnosticsProperty('isLoading', isLoading))
       ..add(DiagnosticsProperty('isError', isError))
-      ..add(DiagnosticsProperty('data', data))
-      ..add(DiagnosticsProperty('errorMessage', errorMessage));
+      ..add(DiagnosticsProperty('data', data));
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$NetworkRequestStateImpl &&
+            other is _$LocalDbRequestStateImpl &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
             (identical(other.isError, isError) || other.isError == isError) &&
-            const DeepCollectionEquality().equals(other.data, data) &&
-            (identical(other.errorMessage, errorMessage) ||
-                other.errorMessage == errorMessage));
+            const DeepCollectionEquality().equals(other.data, data));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, isLoading, isError,
-      const DeepCollectionEquality().hash(data), errorMessage);
+      const DeepCollectionEquality().hash(data));
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$NetworkRequestStateImplCopyWith<_$NetworkRequestStateImpl> get copyWith =>
-      __$$NetworkRequestStateImplCopyWithImpl<_$NetworkRequestStateImpl>(
+  _$$LocalDbRequestStateImplCopyWith<_$LocalDbRequestStateImpl> get copyWith =>
+      __$$LocalDbRequestStateImplCopyWithImpl<_$LocalDbRequestStateImpl>(
           this, _$identity);
 }
 
-abstract class _NetworkRequestState implements NetworkRequestState {
-  const factory _NetworkRequestState(
+abstract class _LocalDbRequestState implements LocalDbRequestState {
+  const factory _LocalDbRequestState(
       {final bool isLoading,
       final bool isError,
-      final dynamic data,
-      final String? errorMessage}) = _$NetworkRequestStateImpl;
+      final dynamic data}) = _$LocalDbRequestStateImpl;
 
   @override
   bool get isLoading;
@@ -199,9 +179,7 @@ abstract class _NetworkRequestState implements NetworkRequestState {
   @override
   dynamic get data;
   @override
-  String? get errorMessage;
-  @override
   @JsonKey(ignore: true)
-  _$$NetworkRequestStateImplCopyWith<_$NetworkRequestStateImpl> get copyWith =>
+  _$$LocalDbRequestStateImplCopyWith<_$LocalDbRequestStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

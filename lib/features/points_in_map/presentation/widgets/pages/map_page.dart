@@ -19,6 +19,7 @@ import '../../../../splash-page/domain/entites/location.dart';
 import '../../controllers/points_in_map_marker_creation_provider.dart';
 import '../../controllers/points_in_map_markers_list_provider.dart';
 import '../../utils/points_in_map_constants.dart';
+import '../../utils/points_in_map_initial_position_provider.dart';
 import '../components/points_in_map_creation_bottom_sheet.dart';
 
 class MapPage extends ConsumerStatefulWidget {
@@ -43,12 +44,7 @@ class _MapPageState extends ConsumerState<MapPage> {
   }
 
   void setInitialPosition() {
-    // initialPosition = ref.read(userInitialPosition);
-
-    initialPosition = CameraPosition(
-      target: const LatLng(41.117143, 16.871871),
-      zoom: MapPageConstants.defaultZoomLevel,
-    );
+    initialPosition = ref.read(userInitialPosition);
   }
 
   void onLongPress(LatLng latLng) async {
@@ -64,6 +60,7 @@ class _MapPageState extends ConsumerState<MapPage> {
     if (context.mounted) {
       showModalBottomSheet(
           context: context, // This is the context before the async gap
+
           builder: (BuildContext context) {
             // This is a new context valid for the modal bottom sheet
             return BottomSheetForCreatingPoints(latLng: latLng);
@@ -150,10 +147,14 @@ class _MapPageState extends ConsumerState<MapPage> {
           : Container(
               height: 100.h,
               child: GoogleMap(
+                mapToolbarEnabled: false,
+                minMaxZoomPreference: const MinMaxZoomPreference(13, 15),
+                zoomControlsEnabled: false,
+                zoomGesturesEnabled: false,
+                myLocationButtonEnabled: false,
                 mapType: MapType.normal,
                 initialCameraPosition: initialPosition,
                 onMapCreated: (GoogleMapController controller) {
-                  print('Map created');
                   if (!_controller.isCompleted) {
                     ref
                         .read(isLoadingProvider.notifier)

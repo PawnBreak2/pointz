@@ -1,14 +1,13 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
 
-part 'core_network_request_state_model.freezed.dart';
+part 'core_local_db_request_state_model.freezed.dart';
 
 @freezed
-class NetworkRequestState with _$NetworkRequestState {
-  const factory NetworkRequestState({
+class LocalDbRequestState with _$LocalDbRequestState {
+  const factory LocalDbRequestState({
     @Default(false) bool isLoading,
     @Default(false) bool isError,
     dynamic data,
-    String? errorMessage,
-  }) = _NetworkRequestState;
+  }) = _LocalDbRequestState;
 }

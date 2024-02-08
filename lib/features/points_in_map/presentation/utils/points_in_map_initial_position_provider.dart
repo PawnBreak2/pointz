@@ -5,6 +5,8 @@ import 'package:pointz/features/splash-page/domain/entites/location.dart';
 import '../../../splash-page/presentation/controllers/location_controller_provider.dart';
 import 'points_in_map_constants.dart';
 
+/// This provider is used to provide the initial position of the map
+
 final userInitialPosition = Provider<CameraPosition>((ref) {
   // If the location data is not available for some reason, the default location is Rome
 

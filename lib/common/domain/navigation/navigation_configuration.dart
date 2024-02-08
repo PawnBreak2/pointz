@@ -20,8 +20,6 @@ class NavigationConfiguration {
           name: 'map-page',
           builder: (context, state) => const MapPage(),
           pageBuilder: (context, state) {
-            print(state.pathParameters);
-            print(state.pathParameters.containsKey('from'));
             if (state.uri.queryParameters.containsKey('from') &&
                 state.pathParameters['from'] == 'splash-page') {
               return CustomTransitionPage(

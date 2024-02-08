@@ -9,7 +9,6 @@ class MarkersListNotifier extends Notifier<Set<Marker>> {
 
   void addMarker(Marker marker) {
     state = {...state, marker};
-    print(state);
   }
 
   void addMarkersList(Set<Marker> markers) {
@@ -24,7 +23,6 @@ class MarkersListNotifier extends Notifier<Set<Marker>> {
     state = state
         .map((e) => e.markerId.value == marker.markerId.value ? marker : e)
         .toSet();
-    print(state);
   }
 
   void clearMarkers() {

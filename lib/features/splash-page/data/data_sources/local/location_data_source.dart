@@ -14,7 +14,6 @@ class LocationDataSource {
           desiredAccuracy: LocationAccuracy.high);
       return Right(position);
     } catch (e) {
-      print(e);
       return Left(e as Exception);
     }
   }
