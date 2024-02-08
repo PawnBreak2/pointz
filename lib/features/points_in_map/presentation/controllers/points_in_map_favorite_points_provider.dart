@@ -15,6 +15,8 @@ class FavoritesListNotifier extends Notifier<List<String>> {
   }
 }
 
+/// Stores a list of keys of the favorite markers.
+
 final favoritesListProvider =
     NotifierProvider<FavoritesListNotifier, List<String>>(
   () => FavoritesListNotifier(),

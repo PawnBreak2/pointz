@@ -52,12 +52,14 @@ class _MapPageState extends ConsumerState<MapPage> {
   }
 
   void onLongPress(LatLng latLng) async {
-    final GoogleMapController controller = await _controller.future;
+    final GoogleMapController localControllerInstance =
+        await _controller.future;
 
-    double previousZoomLevel = await controller.getZoomLevel();
+    double previousZoomLevel = await localControllerInstance.getZoomLevel();
 
-    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target: latLng, zoom: MapPageConstants.defaultZoomLevel * 1.05)));
+    localControllerInstance.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(
+            target: latLng, zoom: MapPageConstants.defaultZoomLevel * 1.05)));
 
     if (context.mounted) {
       showModalBottomSheet(
@@ -66,12 +68,14 @@ class _MapPageState extends ConsumerState<MapPage> {
             // This is a new context valid for the modal bottom sheet
             return BottomSheetForCreatingPoints(latLng: latLng);
           }).whenComplete(() {
-        controller.animateCamera(CameraUpdate.newCameraPosition(
+        localControllerInstance.animateCamera(CameraUpdate.newCameraPosition(
             CameraPosition(target: latLng, zoom: previousZoomLevel)));
         ref.invalidate(markerPointCreationProvider);
       });
     }
   }
+
+  /// Shows bottom sheet with details of the marker
 
   void onMarkerTap(String markerId) async {
     Marker marker = ref
@@ -86,23 +90,37 @@ class _MapPageState extends ConsumerState<MapPage> {
     ref
         .read(markerPointDetailProvider.notifier)
         .populateMarkerPoint(markerPoint);
-    final GoogleMapController controller = await _controller.future;
+    final GoogleMapController localControllerInstance =
+        await _controller.future;
 
-    double previousZoomLevel = await controller.getZoomLevel();
+    double previousZoomLevel = await localControllerInstance.getZoomLevel();
 
-    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target: latLng, zoom: MapPageConstants.defaultZoomLevel * 1.05)));
+    localControllerInstance.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(
+            target: latLng, zoom: MapPageConstants.defaultZoomLevel * 1.05)));
 
     if (context.mounted) {
       showModalBottomSheet(
           context: context, // This is the context before the async gap
           builder: (BuildContext context) {
             // This is a new context valid for the modal bottom sheet
-            return BottomSheetForPointsDetail(latLng: latLng);
-          }).whenComplete(() {
-        controller.animateCamera(CameraUpdate.newCameraPosition(
+            return BottomSheetForPointsDetail(
+                latLng: latLng, label: marker.infoWindow.title!);
+          }).then((result) async {
+        localControllerInstance.animateCamera(CameraUpdate.newCameraPosition(
             CameraPosition(target: latLng, zoom: previousZoomLevel)));
         ref.invalidate(markerPointDetailProvider);
+
+        // Bottom Sheet is dismissed by tapping on the background
+
+        if (result == null) {
+          localControllerInstance.hideMarkerInfoWindow(MarkerId(markerId));
+        } else if (result != null && result['isUpdate'] == true) {
+          await Future.delayed(const Duration(seconds: 3));
+          // This is to show the marker info window for a short time after the bottom sheet is closed
+          // Only for update operation
+          localControllerInstance.hideMarkerInfoWindow(MarkerId(markerId));
+        }
       });
     }
   }

@@ -73,18 +73,20 @@ class RemoteApiNotifier extends Notifier<NetworkRequestState> {
     clearState();
   }
 
-  Future deleteMarker(int id) async {
+  Future deleteMarker(String id) async {
     state = state.copyWith(isLoading: true);
     final resp = await _remoteApiRepository.deleteMarker(id);
 
     resp.fold((exception) {
       state = state.copyWith(
           errorMessage: exception.message, isError: true, data: null);
-    }, (data) {
-      state = state.copyWith(isError: false, errorMessage: null, data: data);
+    }, (success) {
+      state = state.copyWith(isError: false, errorMessage: null, data: success);
+      ref.read(markersListProvider.notifier).removeMarkerById(id);
     });
 
     state = state.copyWith(isLoading: false);
+    clearState();
   }
 
   Future updateMarker(MarkerPoint markerPoint) async {
@@ -113,6 +115,7 @@ class RemoteApiNotifier extends Notifier<NetworkRequestState> {
       ref.read(markersListProvider.notifier).updateMarker(mapMarkerToUpdate);
     });
     state = state.copyWith(isLoading: false);
+    clearState();
   }
 
   Future getMarkerDetails(int id) async {
@@ -126,6 +129,7 @@ class RemoteApiNotifier extends Notifier<NetworkRequestState> {
       state = state.copyWith(isError: false, errorMessage: null, data: data);
     });
     state = state.copyWith(isLoading: true);
+    clearState();
   }
 
   void clearState() {

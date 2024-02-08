@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pointz/features/points_in_map/presentation/controllers/points_in_map_favorite_points_provider.dart';
 import 'package:pointz/features/points_in_map/presentation/controllers/points_in_map_marker_detail_provider.dart';
+import 'package:pointz/features/points_in_map/presentation/utils/points_in_map_is_text_equal_during_updating.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../../../../common/presentation/controllers/remote_api_provider.dart';
@@ -17,10 +18,12 @@ import '../../utils/points_in_map_strings.dart';
 class BottomSheetForPointsDetail extends ConsumerStatefulWidget {
   const BottomSheetForPointsDetail({
     required this.latLng,
+    required this.label,
     super.key,
   });
 
   final LatLng latLng;
+  final String label;
 
   @override
   ConsumerState<BottomSheetForPointsDetail> createState() =>
@@ -40,18 +43,21 @@ class _BottomSheetForMapScreenState
     lng = widget.latLng.longitude;
     _focusNode = FocusNode();
     _focusNode.requestFocus();
+    SchedulerBinding.instance!.addPostFrameCallback((_) {
+      ref.read(markerPointCreationProvider.notifier).setLatAndLng(lat, lng);
+    });
 
     ///TODO: move in method
 
     _controller = TextEditingController()
       ..addListener(() {
-        print('fired');
         if (_controller.text != ref.read(markerPointDetailProvider).label) {
-          ref
-              .read(markerPointDetailProvider.notifier)
-              .setLabel(_controller.text);
+          SchedulerBinding.instance!.addPostFrameCallback((_) {
+            ref
+                .read(markerPointDetailProvider.notifier)
+                .setLabel(_controller.text);
+          });
         }
-
         if (_controller.text.isNotEmpty) {
           SchedulerBinding.instance!.addPostFrameCallback((_) {
             ref
@@ -59,10 +65,15 @@ class _BottomSheetForMapScreenState
                 .update((state) => false);
           });
         }
+        if (_controller.text != widget.label) {
+          SchedulerBinding.instance!.addPostFrameCallback((_) {
+            ref
+                .read(isTextEqualDuringUpdateProvider.notifier)
+                .update((state) => false);
+          });
+        }
       });
-    SchedulerBinding.instance!.addPostFrameCallback((_) {
-      ref.read(markerPointCreationProvider.notifier).setLatAndLng(lat, lng);
-    });
+
     super.initState();
   }
 
@@ -78,6 +89,12 @@ class _BottomSheetForMapScreenState
       ref
           .read(isTextEmptyBeforeSavingProvider.notifier)
           .update((state) => true);
+      return;
+    } else if (_controller.text == widget.label) {
+      ref
+          .read(isTextEqualDuringUpdateProvider.notifier)
+          .update((state) => true);
+      return;
     } else {
       MarkerPoint markerPointToUpdate = ref.read(markerPointDetailProvider);
 
@@ -88,13 +105,18 @@ class _BottomSheetForMapScreenState
           .read(remoteApiProvider.notifier)
           .updateMarker(markerPointToUpdate);
       if (context.mounted) {
-        context.pop();
+        context.pop({'isUpdate': true});
       }
     }
   }
 
   void onPressedFavoriteButton(String id) async {
     ref.read(favoritesListProvider.notifier).addFavorite(id);
+  }
+
+  void onPressedDeleteButton(String id) async {
+    ref.read(remoteApiProvider.notifier).deleteMarker(id);
+    context.pop({'isUpdate': false});
   }
 
   @override
@@ -128,28 +150,40 @@ class _BottomSheetForMapScreenState
                 }
                 bool isTextEmptyBeforeSaving =
                     ref.watch(isTextEmptyBeforeSavingProvider);
+                bool isTextEqualDuringUpdate =
+                    ref.watch(isTextEqualDuringUpdateProvider);
                 return Consumer(
                   builder: (context, ref, child) {
                     _controller.text =
                         ref.read(markerPointDetailProvider).label;
-                    return TextField(
-                        focusNode: _focusNode,
-                        decoration: InputDecoration(
-                          labelStyle: isTextEmptyBeforeSaving
-                              ? TextStyle(color: Colors.blueGrey)
-                              : null,
-                          focusedBorder: isTextEmptyBeforeSaving
-                              ? Theme.of(context)
-                                  .inputDecorationTheme
-                                  .enabledBorder!
-                                  .copyWith(
-                                      borderSide: BorderSide(color: Colors.red))
-                              : null,
-                          labelText: isTextEmptyBeforeSaving
-                              ? MapPageStrings.detailPlaceNameLabelEmpty
-                              : MapPageStrings.detailPlaceNameLabel,
-                        ),
-                        controller: _controller);
+                    return Builder(builder: (context) {
+                      String labelText = '';
+                      if (isTextEqualDuringUpdate) {
+                        labelText = MapPageStrings.detailPlaceNameLabelEqual;
+                      } else if (isTextEmptyBeforeSaving) {
+                        labelText = MapPageStrings.detailPlaceNameLabelEmpty;
+                      } else {
+                        labelText = MapPageStrings.detailPlaceNameLabel;
+                      }
+                      return TextField(
+                          focusNode: _focusNode,
+                          decoration: InputDecoration(
+                              labelStyle: (isTextEmptyBeforeSaving ||
+                                      isTextEqualDuringUpdate)
+                                  ? TextStyle(color: Colors.blueGrey)
+                                  : null,
+                              focusedBorder: (isTextEmptyBeforeSaving ||
+                                      isTextEqualDuringUpdate)
+                                  ? Theme.of(context)
+                                      .inputDecorationTheme
+                                      .enabledBorder!
+                                      .copyWith(
+                                          borderSide:
+                                              BorderSide(color: Colors.red))
+                                  : null,
+                              labelText: labelText),
+                          controller: _controller);
+                    });
                   },
                 );
               },
@@ -189,6 +223,18 @@ class _BottomSheetForMapScreenState
                     },
                   ),
                 ),
+                InkWell(
+                    onTap: () {
+                      context.pop(); // Uses the context provided to the builder
+                    },
+                    child: ElevatedButton(
+                      onPressed: () {
+                        String markerIdToDelete =
+                            ref.read(markerPointDetailProvider).id.toString();
+                        onPressedDeleteButton(markerIdToDelete);
+                      },
+                      child: Icon(Icons.delete_forever_rounded),
+                    )),
               ],
             ),
           ),

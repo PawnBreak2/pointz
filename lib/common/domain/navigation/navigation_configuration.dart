@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pointz/features/splash-page/presentation/widgets/pages/splash_page.dart';
 
 import '../../../features/points_in_map/presentation/widgets/pages/map_page.dart';
-import '../../../features/points_in_map/presentation/widgets/pages/points_list_page.dart';
+import '../../../features/points_in_map/presentation/widgets/pages/favorites_list_page.dart';
 
 class NavigationConfiguration {
   static final GoRouter routes = GoRouter(

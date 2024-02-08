@@ -111,8 +111,8 @@ class RemoteApiRepository {
     );
   }
 
-  Future<Either<NetworkError, MarkerPoint>> deleteMarker(int id) async {
-    final resp = await remoteApiDataSource.deleteMarker(id.toString());
+  Future<Either<NetworkError, bool>> deleteMarker(String id) async {
+    final resp = await remoteApiDataSource.deleteMarker(id);
 
     return resp.fold(
       (exception) {
@@ -128,8 +128,8 @@ class RemoteApiRepository {
 
         return Left(NetworkError(CommonStrings.genericNetworkError));
       },
-      (data) {
-        return Right(MarkerPoint.fromJson(data));
+      (success) {
+        return const Right(true);
       },
     );
   }

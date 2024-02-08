@@ -65,6 +65,7 @@ class _BottomSheetForMapScreenState
         ref
             .read(isTextEmptyBeforeSavingProvider.notifier)
             .update((state) => true);
+        return;
       } else {
         ref
             .read(isTextEmptyBeforeSavingProvider.notifier)

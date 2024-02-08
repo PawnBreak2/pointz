@@ -41,13 +41,12 @@ class RemoteApiDataSource {
     }
   }
 
-  Future<Either<DioException, Map<String, dynamic>>> deleteMarker(
-      String id) async {
+  Future<Either<DioException, bool>> deleteMarker(String id) async {
     final Response response = await dioClient
         .delete('https://906f04d8ee93.ngrok.app/api/points/$id?caller=dario');
 
     if (response.statusCode == 200 && response != null) {
-      return Right(response.data);
+      return const Right(true);
     } else {
       return Left(DioException(requestOptions: response.requestOptions));
     }

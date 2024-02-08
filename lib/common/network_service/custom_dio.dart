@@ -14,7 +14,7 @@ class CustomDio {
       error: true,
       showProcessingTime: true,
       showCUrl: true,
-      canShowLog: false,
+      canShowLog: true,
     ));
   }
 
