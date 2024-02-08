@@ -39,11 +39,7 @@ class LocalFavoritesDbDataSource {
       final List<Map<String, dynamic>> results = await db.query('favorites');
       List<String> favorites =
           results.map((result) => result['id'] as String).toList();
-      if (favorites.isNotEmpty) {
-        return Right(favorites);
-      } else {
-        return const Left(false);
-      }
+      return Right(favorites);
     } catch (e) {
       return const Left(false);
     }

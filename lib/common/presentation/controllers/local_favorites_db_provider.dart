@@ -14,13 +14,13 @@ class LocalFavoritesNotifier extends Notifier<LocalDbRequestState> {
       LocalFavoritesDbRepository(
           localFavoritesDbDataSource: LocalFavoritesDbDataSource());
 
-  Future<bool> addFavorite(String favoriteValue) async {
+  Future<bool> addFavorite(String id) async {
     state = state.copyWith(isLoading: true);
-    final success =
-        await _localFavoritesDbRepository.addFavorite(favoriteValue);
+    final success = await _localFavoritesDbRepository.addFavorite(id);
 
     if (success) {
       state = state.copyWith(isLoading: false, isError: false);
+      print('added favorite $id to local db');
       return true;
     } else {
       state = state.copyWith(isLoading: false, isError: true, data: null);
@@ -28,13 +28,13 @@ class LocalFavoritesNotifier extends Notifier<LocalDbRequestState> {
     }
   }
 
-  Future<bool> removeFavorite(String favoriteValue) async {
+  Future<bool> removeFavorite(String id) async {
     state = state.copyWith(isLoading: true);
-    final success =
-        await _localFavoritesDbRepository.removeFavorite(favoriteValue);
+    final success = await _localFavoritesDbRepository.removeFavorite(id);
 
     if (success) {
       state = state.copyWith(isLoading: false, isError: false);
+      print('removed favorite $id from local db');
       return true;
     } else {
       state = state.copyWith(isLoading: false, isError: true, data: null);
@@ -51,8 +51,7 @@ class LocalFavoritesNotifier extends Notifier<LocalDbRequestState> {
             state = state.copyWith(isLoading: false, isError: true, data: null),
         (data) {
       state = state.copyWith(isLoading: false, isError: false, data: data);
-      print('gotfavorites from local db');
-      print('data');
+      print('got favorites from local db');
       print(data);
       ref.read(favoritesListProvider.notifier).setAllFavorites(data);
     });

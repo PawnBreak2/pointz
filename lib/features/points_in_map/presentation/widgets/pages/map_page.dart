@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pointz/features/points_in_map/domain/entities/point/marker_point_model.dart';
+import 'package:pointz/features/points_in_map/presentation/controllers/points_in_map_favorite_points_provider.dart';
 import 'package:pointz/features/points_in_map/presentation/controllers/points_in_map_marker_detail_provider.dart';
 import 'package:pointz/features/points_in_map/presentation/widgets/components/points_in_map_detail_bottom_sheet.dart';
 
@@ -129,9 +130,14 @@ class _MapPageState extends ConsumerState<MapPage> {
     });
   }
 
+  bool shouldShowFavoriteMarker(String id) {
+    return ref.watch(favoritesListProvider).contains(id);
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isLoading = ref.watch(isLoadingProvider);
+    print(ref.read(favoritesListProvider));
     Set<Marker> markersList = ref.watch(markersListProvider).map((e) {
       return Marker(
         markerId: e.markerId,
@@ -142,7 +148,10 @@ class _MapPageState extends ConsumerState<MapPage> {
         infoWindow: InfoWindow(
           title: e.infoWindow.title,
         ),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan),
+        icon: BitmapDescriptor.defaultMarkerWithHue(
+            shouldShowFavoriteMarker(e.markerId.value)
+                ? BitmapDescriptor.hueMagenta
+                : BitmapDescriptor.hueCyan),
       );
     }).toSet();
     return MainScaffold(
