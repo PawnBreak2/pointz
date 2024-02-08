@@ -122,10 +122,9 @@ class _BottomSheetForMapScreenState
 
   @override
   Widget build(BuildContext context) {
-    double keyboardPadding = MediaQuery.of(context).viewInsets.bottom;
-    print(keyboardPadding);
+    double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
     return Padding(
-      padding: EdgeInsets.only(bottom: keyboardPadding),
+      padding: EdgeInsets.only(bottom: keyboardHeight),
       child: SizedBox(
         height: 30.h,
         width: 100.w,
@@ -133,20 +132,16 @@ class _BottomSheetForMapScreenState
           children: [
             const Expanded(flex: 1, child: SizedBox()),
             Expanded(
-              flex: 3,
-              child: !(keyboardPadding > 10)
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.location_on),
-                        Text(
-                            widget.latLng.longitude.toString().substring(0, 7)),
-                        VerticalDivider(indent: 2.h, endIndent: 2.h),
-                        Text(widget.latLng.latitude.toString().substring(0, 7)),
-                      ],
-                    )
-                  : SizedBox(),
-            ),
+                flex: 3,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.location_on),
+                    Text(widget.latLng.longitude.toString().substring(0, 7)),
+                    VerticalDivider(indent: 2.h, endIndent: 2.h),
+                    Text(widget.latLng.latitude.toString().substring(0, 7)),
+                  ],
+                )),
             Expanded(
               flex: 5,
               child: Consumer(
@@ -198,54 +193,63 @@ class _BottomSheetForMapScreenState
             ),
             Expanded(
               flex: 3,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  InkWell(
-                      onTap: () {
-                        context
-                            .pop(); // Uses the context provided to the builder
-                      },
-                      child: ElevatedButton(
-                        onPressed: onPressedUpdateButton,
-                        child: const Text('Modifica'),
-                      )),
-                  InkWell(
-                    onTap: () {
-                      context.pop(); // Uses the context provided to the builder
-                    },
-                    child: Consumer(
-                      builder: (context, ref, child) {
-                        String markerIdToAddToFavorites =
-                            ref.read(markerPointDetailProvider).id.toString();
-                        bool isFavorite = ref.watch(favoritesListProvider).any(
-                            (element) => element == markerIdToAddToFavorites);
+              child: (keyboardHeight <= 0)
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        InkWell(
+                            onTap: () {
+                              context
+                                  .pop(); // Uses the context provided to the builder
+                            },
+                            child: ElevatedButton(
+                              onPressed: onPressedUpdateButton,
+                              child: const Text('Modifica'),
+                            )),
+                        InkWell(
+                          onTap: () {
+                            context
+                                .pop(); // Uses the context provided to the builder
+                          },
+                          child: Consumer(
+                            builder: (context, ref, child) {
+                              String markerIdToAddToFavorites = ref
+                                  .read(markerPointDetailProvider)
+                                  .id
+                                  .toString();
+                              bool isFavorite = ref
+                                  .watch(favoritesListProvider)
+                                  .any((element) =>
+                                      element == markerIdToAddToFavorites);
 
-                        return ElevatedButton(
-                          onPressed: () =>
-                              onPressedFavoriteButton(markerIdToAddToFavorites),
-                          child: Icon(isFavorite
-                              ? Icons.favorite
-                              : Icons.favorite_border),
-                        );
-                      },
-                    ),
-                  ),
-                  InkWell(
-                      onTap: () {
-                        context
-                            .pop(); // Uses the context provided to the builder
-                      },
-                      child: ElevatedButton(
-                        onPressed: () {
-                          String markerIdToDelete =
-                              ref.read(markerPointDetailProvider).id.toString();
-                          onPressedDeleteButton(markerIdToDelete);
-                        },
-                        child: Icon(Icons.delete_forever_rounded),
-                      )),
-                ],
-              ),
+                              return ElevatedButton(
+                                onPressed: () => onPressedFavoriteButton(
+                                    markerIdToAddToFavorites),
+                                child: Icon(isFavorite
+                                    ? Icons.favorite
+                                    : Icons.favorite_border),
+                              );
+                            },
+                          ),
+                        ),
+                        InkWell(
+                            onTap: () {
+                              context
+                                  .pop(); // Uses the context provided to the builder
+                            },
+                            child: ElevatedButton(
+                              onPressed: () {
+                                String markerIdToDelete = ref
+                                    .read(markerPointDetailProvider)
+                                    .id
+                                    .toString();
+                                onPressedDeleteButton(markerIdToDelete);
+                              },
+                              child: Icon(Icons.delete_forever_rounded),
+                            )),
+                      ],
+                    )
+                  : SizedBox(),
             ),
             const Expanded(flex: 2, child: SizedBox()),
           ],

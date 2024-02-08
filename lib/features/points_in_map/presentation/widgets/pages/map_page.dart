@@ -98,34 +98,35 @@ class _MapPageState extends ConsumerState<MapPage> {
 
     double previousZoomLevel = await localControllerInstance.getZoomLevel();
 
-    localControllerInstance.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(
-            target: latLng, zoom: MapPageConstants.defaultZoomLevel * 1.05)));
+    localControllerInstance
+        .animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+            target: latLng, zoom: MapPageConstants.defaultZoomLevel * 1.05)))
+        .whenComplete(() {
+      if (context.mounted) {
+        showModalBottomSheet(
+            context: context, // This is the context before the async gap
+            builder: (BuildContext context) {
+              // This is a new context valid for the modal bottom sheet
+              return BottomSheetForPointsDetail(
+                  latLng: latLng, label: marker.infoWindow.title!);
+            }).then((result) async {
+          localControllerInstance.animateCamera(CameraUpdate.newCameraPosition(
+              CameraPosition(target: latLng, zoom: previousZoomLevel)));
+          ref.invalidate(markerPointDetailProvider);
 
-    if (context.mounted) {
-      showModalBottomSheet(
-          context: context, // This is the context before the async gap
-          builder: (BuildContext context) {
-            // This is a new context valid for the modal bottom sheet
-            return BottomSheetForPointsDetail(
-                latLng: latLng, label: marker.infoWindow.title!);
-          }).then((result) async {
-        localControllerInstance.animateCamera(CameraUpdate.newCameraPosition(
-            CameraPosition(target: latLng, zoom: previousZoomLevel)));
-        ref.invalidate(markerPointDetailProvider);
+          // Bottom Sheet is dismissed by tapping on the background
 
-        // Bottom Sheet is dismissed by tapping on the background
-
-        if (result == null) {
-          localControllerInstance.hideMarkerInfoWindow(MarkerId(markerId));
-        } else if (result != null && result['isUpdate'] == true) {
-          await Future.delayed(const Duration(seconds: 3));
-          // This is to show the marker info window for a short time after the bottom sheet is closed
-          // Only for update operation
-          localControllerInstance.hideMarkerInfoWindow(MarkerId(markerId));
-        }
-      });
-    }
+          if (result == null) {
+            localControllerInstance.hideMarkerInfoWindow(MarkerId(markerId));
+          } else if (result != null && result['isUpdate'] == true) {
+            await Future.delayed(const Duration(seconds: 3));
+            // This is to show the marker info window for a short time after the bottom sheet is closed
+            // Only for update operation
+            localControllerInstance.hideMarkerInfoWindow(MarkerId(markerId));
+          }
+        });
+      }
+    });
   }
 
   @override

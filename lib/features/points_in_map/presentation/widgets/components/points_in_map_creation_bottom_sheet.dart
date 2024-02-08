@@ -79,9 +79,10 @@ class _BottomSheetForMapScreenState
 
   @override
   Widget build(BuildContext context) {
+    double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+
     return Padding(
-      padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom * 0.81),
+      padding: EdgeInsets.only(bottom: keyboardHeight),
       child: SizedBox(
         height: 20.h,
         width: 100.w,
@@ -124,14 +125,17 @@ class _BottomSheetForMapScreenState
             ),
             Expanded(
               flex: 3,
-              child: InkWell(
-                  onTap: () {
-                    context.pop(); // Uses the context provided to the builder
-                  },
-                  child: ElevatedButton(
-                    onPressed: onPressedSaveButton,
-                    child: const Text('Salva'),
-                  )),
+              child: (keyboardHeight <= 0)
+                  ? InkWell(
+                      onTap: () {
+                        context
+                            .pop(); // Uses the context provided to the builder
+                      },
+                      child: ElevatedButton(
+                        onPressed: onPressedSaveButton,
+                        child: const Text('Salva'),
+                      ))
+                  : SizedBox(),
             ),
             const Expanded(flex: 2, child: SizedBox()),
           ],
