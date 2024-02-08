@@ -21,6 +21,7 @@ class PointsListPage extends ConsumerWidget {
         .toList();
     bool isFavoriteListEmpty = favoriteMarkersList.isEmpty;
     return OpaqueScaffold(
+        title: 'I tuoi punti preferiti',
         body: isFavoriteListEmpty
             ? Center(
                 child: Text(

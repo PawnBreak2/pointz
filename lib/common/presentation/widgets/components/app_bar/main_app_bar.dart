@@ -9,26 +9,30 @@ class MainAppBar extends StatelessWidget {
   MainAppBar({
     this.isOpaque = false,
     this.hasActions = true,
+    this.title = 'Pointz.',
+    this.leading,
     super.key,
   });
+  String title;
   bool isOpaque;
   bool hasActions;
+  Widget? leading;
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      leading: isOpaque
+      leading: (isOpaque && leading == null)
           ? IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                context.goNamed(NavigationMap.getPage(NavigationPage.map));
+                context.pop();
               },
             )
-          : null,
+          : leading,
       actions: hasActions
           ? [
               InkWell(
                   onTap: () {
-                    context.goNamed(
+                    context.pushNamed(
                         NavigationMap.getPage(NavigationPage.pointsList));
                   },
                   customBorder: const CircleBorder(),
@@ -47,7 +51,7 @@ class MainAppBar extends StatelessWidget {
         child: Hero(
           tag: 'logo',
           child: Text(
-            'Pointz.',
+            title,
             style: Theme.of(context).textTheme.titleLarge,
           ),
         ),

@@ -164,6 +164,10 @@ class _MapPageState extends ConsumerState<MapPage> {
               height: 100.h,
               child: GoogleMap(
                 mapToolbarEnabled: false,
+                cameraTargetBounds: CameraTargetBounds(LatLngBounds(
+                    southwest: LatLng(initialPosition.target.latitude,
+                        initialPosition.target.longitude),
+                    northeast: LatLng(50.0, 20.0))),
                 key: mapWidgetKey,
                 minMaxZoomPreference: const MinMaxZoomPreference(13, 15),
                 zoomControlsEnabled: false,
