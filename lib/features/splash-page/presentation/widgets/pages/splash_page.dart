@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pointz/common/presentation/controllers/local_favorites_db_provider.dart';
 import 'package:pointz/common/presentation/controllers/local_points_db_provider.dart';
-import 'package:pointz/common/presentation/controllers/remote_api_provider.dart';
+import 'package:pointz/common/presentation/controllers/points_management_provider.dart';
 import 'package:pointz/common/presentation/utils/common_strings.dart';
 import 'package:pointz/features/splash-page/presentation/controllers/connectivity_checker.dart';
 import 'package:pointz/features/splash-page/presentation/utils/splash_page_strings.dart';
@@ -27,7 +27,6 @@ class SplashPage extends ConsumerStatefulWidget {
 class _SplashPageState extends ConsumerState<SplashPage> {
   bool isLocationServiceEnabled = false;
   LocationPermission permission = LocationPermission.denied;
-
   @override
   void initState() {
     init();
@@ -67,12 +66,19 @@ class _SplashPageState extends ConsumerState<SplashPage> {
       if (previous == true && next == false) {
         SchedulerBinding.instance!.addPostFrameCallback((_) async {
           await Future.delayed(const Duration(seconds: 2));
-          if (mounted)
-            context.pushReplacementNamed(
-                NavigationMap.getPage(NavigationPage.map),
-                queryParameters: {
-                  'from': NavigationMap.getPage(NavigationPage.splash)
-                });
+          if (mounted) {
+            bool goToOnlineMapPage = !ref.read(isOnlineProvider);
+            if (goToOnlineMapPage) {
+              context.pushReplacementNamed(
+                  NavigationMap.getPage(NavigationPage.map),
+                  queryParameters: {
+                    'from': NavigationMap.getPage(NavigationPage.splash)
+                  });
+            } else {
+              context.pushReplacementNamed(
+                  NavigationMap.getPage(NavigationPage.offlineMap));
+            }
+          }
         });
       }
     });

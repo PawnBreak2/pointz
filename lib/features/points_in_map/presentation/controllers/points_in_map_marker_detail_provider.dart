@@ -3,7 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../domain/entities/point/marker_point_model.dart';
 import '../utils/points_in_map_constants.dart';
-import 'points_in_map_markers_list_provider.dart';
+import '../../../../common/presentation/controllers/points_in_map_markers_list_provider.dart';
 
 /// Used to manage the visualizations of the marker point creation.
 ///

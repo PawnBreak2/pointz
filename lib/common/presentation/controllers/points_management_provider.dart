@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pointz/common/presentation/controllers/local_points_db_provider.dart';
+import 'package:pointz/common/presentation/controllers/static_maps_provider.dart';
+import 'package:pointz/common/presentation/controllers/points_in_map_favorite_points_provider.dart';
 import 'package:pointz/features/points_in_map/presentation/controllers/points_in_map_marker_detail_provider.dart';
 
 import '../../../features/points_in_map/domain/entities/point/marker_point_model.dart';
 import '../../../features/points_in_map/presentation/controllers/points_in_map_marker_creation_provider.dart';
-import '../../../features/points_in_map/presentation/controllers/points_in_map_markers_list_provider.dart';
+import 'points_in_map_markers_list_provider.dart';
 import '../../data/data_sources/remote/remote_api_data_source.dart';
 import '../../data/repositories/remote_api_repository.dart';
 import '../../domain/models/states/network_request_state/core_network_request_state_model.dart';
@@ -33,8 +35,6 @@ class RemoteApiNotifier extends Notifier<NetworkRequestState> {
     }, (id) async {
       state = state.copyWith(isError: false, errorMessage: null, data: id);
 
-      // Creates the marker with the same values as the markerPointToSave and the new id, and adds it to the markers list
-
       String title = markerPointToSave.label;
       LatLng position = LatLng(markerPointToSave.lat, markerPointToSave.lng);
 
@@ -48,6 +48,10 @@ class RemoteApiNotifier extends Notifier<NetworkRequestState> {
           .saveMarker(markerPointToSave);
       if (localDbResp) {
         ref.read(markersListProvider.notifier).addMarker(markerToAddToList);
+        await ref.read(staticMapsProvider.notifier).saveMapScreenshot(
+            id: id.toString(),
+            lat: markerPointToSave.lat,
+            lng: markerPointToSave.lng);
         clearState();
       } else {
         state = state.copyWith(
@@ -95,6 +99,8 @@ class RemoteApiNotifier extends Notifier<NetworkRequestState> {
           await ref.read(localDbProvider.notifier).deleteMarker(int.parse(id));
       if (localDbResp) {
         ref.read(markersListProvider.notifier).removeMarkerById(id);
+        ref.read(favoritesListProvider.notifier).removeFavorite(id);
+        await ref.read(staticMapsProvider.notifier).deleteMapScreenshot(id);
         clearState();
       } else {
         state = state.copyWith(

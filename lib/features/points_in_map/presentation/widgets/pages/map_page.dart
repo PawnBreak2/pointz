@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pointz/features/points_in_map/domain/entities/point/marker_point_model.dart';
-import 'package:pointz/features/points_in_map/presentation/controllers/points_in_map_favorite_points_provider.dart';
+import 'package:pointz/common/presentation/controllers/points_in_map_favorite_points_provider.dart';
 import 'package:pointz/features/points_in_map/presentation/controllers/points_in_map_marker_detail_provider.dart';
 import 'package:pointz/features/points_in_map/presentation/widgets/components/points_in_map_detail_bottom_sheet.dart';
 
@@ -18,7 +18,7 @@ import '../../../../../common/presentation/controllers/is_loading_provider.dart'
 import '../../../../../common/presentation/widgets/scaffolds/main_scaffold.dart';
 import '../../../../splash-page/domain/entites/location.dart';
 import '../../controllers/points_in_map_marker_creation_provider.dart';
-import '../../controllers/points_in_map_markers_list_provider.dart';
+import '../../../../../common/presentation/controllers/points_in_map_markers_list_provider.dart';
 import '../../utils/points_in_map_constants.dart';
 import '../../utils/points_in_map_initial_position_provider.dart';
 import '../components/points_in_map_creation_bottom_sheet.dart';
@@ -31,7 +31,6 @@ class MapPage extends ConsumerStatefulWidget {
 }
 
 class _MapPageState extends ConsumerState<MapPage> {
-  GlobalKey mapWidgetKey = GlobalKey();
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
@@ -52,14 +51,7 @@ class _MapPageState extends ConsumerState<MapPage> {
   onLongPress(LatLng latLng) async {
     final GoogleMapController localControllerInstance =
         await _controller.future;
-    var tapPosition = await localControllerInstance.getScreenCoordinate(latLng);
-    RenderBox mapWidgetRenderBox =
-        mapWidgetKey.currentContext!.findRenderObject() as RenderBox;
-    var mapWidgetPosition = mapWidgetRenderBox.localToGlobal(Offset.zero);
-    print(tapPosition);
 
-    double tapPositionX = tapPosition.x.toDouble() + mapWidgetPosition.dx;
-    double tapPositionY = tapPosition.y.toDouble() + mapWidgetPosition.dy;
     var previousZoomLevel = await localControllerInstance.getZoomLevel();
 
     localControllerInstance.animateCamera(CameraUpdate.newCameraPosition(
@@ -168,7 +160,6 @@ class _MapPageState extends ConsumerState<MapPage> {
                     southwest: LatLng(initialPosition.target.latitude,
                         initialPosition.target.longitude),
                     northeast: LatLng(50.0, 20.0))),
-                key: mapWidgetKey,
                 minMaxZoomPreference: const MinMaxZoomPreference(13, 15),
                 zoomControlsEnabled: false,
                 zoomGesturesEnabled: false,

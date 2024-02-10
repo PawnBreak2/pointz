@@ -6,27 +6,18 @@ import '../../../../domain/navigation/navigation_map.dart';
 import '../buttons/points_list_button.dart';
 
 class OfflineAppBar extends StatelessWidget {
-  OfflineAppBar({
-    this.title = 'Offline Pointz.',
-    super.key,
-  });
+  OfflineAppBar({this.title = 'Offline Pointz.', super.key, this.leading});
   String title;
 
   Widget? leading;
   @override
   Widget build(BuildContext context) {
+    print('building');
+    print(leading);
     return AppBar(
       leading: Padding(
         padding: EdgeInsets.symmetric(horizontal: 3.w),
-        child: IconButton(
-          icon: const Icon(
-            Icons.location_on_sharp,
-            size: 28,
-          ),
-          onPressed: () {
-            context.pop();
-          },
-        ),
+        child: leading,
       ),
       actions: [
         InkWell(

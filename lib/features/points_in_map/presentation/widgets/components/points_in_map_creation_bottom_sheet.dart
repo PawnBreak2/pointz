@@ -5,9 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-import '../../../../../common/presentation/controllers/remote_api_provider.dart';
+import '../../../../../common/presentation/controllers/points_management_provider.dart';
+import '../../../../../common/presentation/controllers/static_maps_provider.dart';
 import '../../controllers/points_in_map_marker_creation_provider.dart';
-import '../../controllers/points_in_map_markers_list_provider.dart';
+import '../../../../../common/presentation/controllers/points_in_map_markers_list_provider.dart';
 import '../../utils/points_in_map_is_text_empty_before_saving.dart';
 import '../../utils/points_in_map_strings.dart';
 
@@ -60,7 +61,7 @@ class _BottomSheetForMapScreenState
   }
 
   void onPressedSaveButton() async {
-    SchedulerBinding.instance!.addPostFrameCallback((_) {
+    SchedulerBinding.instance!.addPostFrameCallback((_) async {
       if (_controller.text.isEmpty) {
         ref
             .read(isTextEmptyBeforeSavingProvider.notifier)
@@ -70,8 +71,7 @@ class _BottomSheetForMapScreenState
         ref
             .read(isTextEmptyBeforeSavingProvider.notifier)
             .update((state) => false);
-        ref.read(remoteApiProvider.notifier).saveMarker();
-
+        await ref.read(remoteApiProvider.notifier).saveMarker();
         context.pop();
       }
     });

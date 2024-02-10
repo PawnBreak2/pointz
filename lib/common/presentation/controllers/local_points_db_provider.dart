@@ -3,7 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pointz/common/data/data_sources/local/local_points_db_data_source.dart';
 
 import '../../../features/points_in_map/domain/entities/point/marker_point_model.dart';
-import '../../../features/points_in_map/presentation/controllers/points_in_map_markers_list_provider.dart';
+import 'points_in_map_markers_list_provider.dart';
 import '../../data/repositories/local_points_db_repository.dart';
 import '../../domain/models/states/local_db_request_state/core_local_db_request_state_model.dart';
 

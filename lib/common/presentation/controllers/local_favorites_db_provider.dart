@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pointz/common/data/repositories/local_favorites_db_repository.dart';
-import 'package:pointz/features/points_in_map/presentation/controllers/points_in_map_favorite_points_provider.dart';
+import 'package:pointz/common/presentation/controllers/points_in_map_favorite_points_provider.dart';
 import '../../data/data_sources/local/local_favorites_db_data_source.dart';
 import '../../domain/models/states/local_db_request_state/core_local_db_request_state_model.dart';
 

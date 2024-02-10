@@ -3,15 +3,15 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:pointz/features/points_in_map/presentation/controllers/points_in_map_favorite_points_provider.dart';
+import 'package:pointz/common/presentation/controllers/points_in_map_favorite_points_provider.dart';
 import 'package:pointz/features/points_in_map/presentation/controllers/points_in_map_marker_detail_provider.dart';
 import 'package:pointz/features/points_in_map/presentation/utils/points_in_map_is_text_equal_during_updating.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-import '../../../../../common/presentation/controllers/remote_api_provider.dart';
+import '../../../../../common/presentation/controllers/points_management_provider.dart';
 import '../../../domain/entities/point/marker_point_model.dart';
 import '../../controllers/points_in_map_marker_creation_provider.dart';
-import '../../controllers/points_in_map_markers_list_provider.dart';
+import '../../../../../common/presentation/controllers/points_in_map_markers_list_provider.dart';
 import '../../utils/points_in_map_is_text_empty_before_saving.dart';
 import '../../utils/points_in_map_strings.dart';
 

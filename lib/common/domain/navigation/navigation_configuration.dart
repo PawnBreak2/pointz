@@ -11,7 +11,7 @@ import 'navigation_map.dart';
 class NavigationConfiguration {
   static final GoRouter routes = GoRouter(
     debugLogDiagnostics: true,
-    initialLocation: '/offline-map',
+    initialLocation: '/',
     routes: [
       GoRoute(
         path: '/',
@@ -39,7 +39,7 @@ class NavigationConfiguration {
             }
           }),
       GoRoute(
-        path: '/points-list',
+        path: '/favorite-points-list',
         name: NavigationMap.getPage(NavigationPage.pointsList),
         builder: (context, state) => const PointsListPage(),
       ),
