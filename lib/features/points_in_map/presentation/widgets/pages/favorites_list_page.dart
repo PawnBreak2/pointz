@@ -23,7 +23,7 @@ class PointsListPage extends ConsumerWidget {
     return OpaqueScaffold(
         title: 'I tuoi punti preferiti',
         body: isFavoriteListEmpty
-            ? Center(
+            ? const Center(
                 child: Text(
                   'Non hai ancora selezionato nessun punto come preferito.',
                   textAlign: TextAlign.center,

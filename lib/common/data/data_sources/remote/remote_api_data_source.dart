@@ -13,7 +13,7 @@ class RemoteApiDataSource {
         'https://906f04d8ee93.ngrok.app/api/points?caller=dario',
         data: data);
 
-    if (response.statusCode == 201 && response != null) {
+    if (response.statusCode == 201) {
       return Right(response.data);
     } else {
       return Left(DioException(requestOptions: response.requestOptions));
@@ -23,7 +23,7 @@ class RemoteApiDataSource {
   Future<Either<DioException, List<dynamic>>> getMarkers() async {
     final Response response = await dioClient
         .get('https://906f04d8ee93.ngrok.app/api/points?caller=dario');
-    if (response.statusCode == 200 && response != null) {
+    if (response.statusCode == 200) {
       return Right(response.data);
     } else {
       return Left(DioException(requestOptions: response.requestOptions));
@@ -34,7 +34,7 @@ class RemoteApiDataSource {
       String id) async {
     final Response response = await dioClient
         .get('https://906f04d8ee93.ngrok.app/api/points/$id?caller=dario');
-    if (response.statusCode == 200 && response != null) {
+    if (response.statusCode == 200) {
       return Right(response.data);
     } else {
       return Left(DioException(requestOptions: response.requestOptions));
@@ -45,7 +45,7 @@ class RemoteApiDataSource {
     final Response response = await dioClient
         .delete('https://906f04d8ee93.ngrok.app/api/points/$id?caller=dario');
 
-    if (response.statusCode == 200 && response != null) {
+    if (response.statusCode == 200) {
       return const Right(true);
     } else {
       return Left(DioException(requestOptions: response.requestOptions));
@@ -58,7 +58,7 @@ class RemoteApiDataSource {
         'https://906f04d8ee93.ngrok.app/api/points/$id?caller=dario',
         data: data);
 
-    if (response.statusCode == 200 && response != null) {
+    if (response.statusCode == 200) {
       return Right(response.data);
     } else {
       return Left(DioException(requestOptions: response.requestOptions));

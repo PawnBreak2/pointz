@@ -13,10 +13,8 @@ class LocalPointsDbRepository {
   }
 
   Future<bool> saveMarkers(List<MarkerPoint> markersList) async {
-    // Convert the list of MarkerPoint objects to a list of Map<String, dynamic>
     List<Map<String, dynamic>> markersJsonList =
         markersList.map((marker) => marker.toJson()).toList();
-    // Call the saveMarkers method in the LocalDbDataSource with the converted list
     return await _localPointsDbDataSource.saveMarkers(markersJsonList);
   }
 

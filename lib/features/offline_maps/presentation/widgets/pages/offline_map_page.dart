@@ -5,7 +5,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pointz/common/domain/navigation/navigation_map.dart';
-import 'package:pointz/common/presentation/widgets/scaffolds/main_scaffold.dart';
+
 import 'package:pointz/common/presentation/widgets/scaffolds/opaque_scaffold.dart';
 import 'package:pointz/features/offline_maps/presentation/controllers/offline_points_provider.dart';
 import 'package:pointz/features/offline_maps/presentation/controllers/selected_offline_points_provider.dart';
@@ -26,7 +26,7 @@ class _OfflineMapPageState extends ConsumerState<OfflineMapPage> {
   @override
   void initState() {
     offlinePoints = ref.read(offlinePointsProvider);
-    SchedulerBinding.instance!.addPostFrameCallback((_) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
       if (offlinePoints.isNotEmpty) {
         ref
             .read(staticMapsProvider.notifier)
@@ -89,7 +89,8 @@ class _OfflineMapPageState extends ConsumerState<OfflineMapPage> {
                       ],
                     );
                   } else {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(
+                        child: Text('La mappa non è disponibile'));
                   }
                 }
               },

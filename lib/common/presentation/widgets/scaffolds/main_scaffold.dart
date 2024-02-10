@@ -8,14 +8,16 @@ class MainScaffold extends StatelessWidget {
   Widget body;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      extendBodyBehindAppBar: true,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(6.h),
-        child: MainAppBar(),
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        extendBodyBehindAppBar: true,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(6.h),
+          child: MainAppBar(),
+        ),
+        body: body,
       ),
-      body: body,
     );
   }
 }

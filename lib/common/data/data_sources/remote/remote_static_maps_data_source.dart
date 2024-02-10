@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dartz/dartz.dart';
@@ -14,7 +13,7 @@ class RemoteStaticMapsDataSource {
     final Response response = await dioClient.get(
         'https://maps.googleapis.com/maps/api/staticmap?size=262x568&zoom=13&scale=2&markers=size:small|color:0xD727D6|$latitude,$longitude&key=$_apiKey',
         options: Options(responseType: ResponseType.bytes));
-    if (response.statusCode == 200 && response != null) {
+    if (response.statusCode == 200) {
       Uint8List imageData = response.data;
       return Right(imageData);
     } else {

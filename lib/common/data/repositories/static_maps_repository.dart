@@ -23,7 +23,6 @@ class StaticMapsRepository {
 
     return resp.fold(
       (exception) {
-        print('error');
         if (exception.message != null) {
           log(exception.message!,
               name: 'StaticMapRepository.saveMapScreenshot Exception');
@@ -37,7 +36,6 @@ class StaticMapsRepository {
         return Left(NetworkError(CommonStrings.genericNetworkError));
       },
       (Uint8List imageFile) async {
-        print('Image file: $imageFile');
         bool resp =
             await LocalStaticMapImagesDataSource.saveImageToLocalFileSystem(
                 imageFile, id);

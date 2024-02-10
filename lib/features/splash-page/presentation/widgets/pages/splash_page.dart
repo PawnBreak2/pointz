@@ -34,7 +34,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   }
 
   void init() async {
-    SchedulerBinding.instance!.addPostFrameCallback((_) async {
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
       List<Future> startupTasks;
       ref.read(isLoadingProvider.notifier).update((state) => true);
       bool isOnline = await checkConnectivity();
@@ -64,10 +64,10 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   Widget build(BuildContext context) {
     ref.listen(isLoadingProvider, (previous, next) {
       if (previous == true && next == false) {
-        SchedulerBinding.instance!.addPostFrameCallback((_) async {
+        SchedulerBinding.instance.addPostFrameCallback((_) async {
           await Future.delayed(const Duration(seconds: 2));
           if (mounted) {
-            bool goToOnlineMapPage = !ref.read(isOnlineProvider);
+            bool goToOnlineMapPage = ref.read(isOnlineProvider);
             if (goToOnlineMapPage) {
               context.pushReplacementNamed(
                   NavigationMap.getPage(NavigationPage.map),

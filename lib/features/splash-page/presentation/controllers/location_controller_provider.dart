@@ -8,7 +8,7 @@ import '../../domain/entites/location_state_model.dart';
 class LocationController extends AutoDisposeNotifier<LocationState> {
   @override
   LocationState build() {
-    return LocationState();
+    return const LocationState();
   }
 
   getLocation() async {

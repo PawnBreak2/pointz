@@ -1,7 +1,5 @@
 import 'package:geolocator/geolocator.dart';
 
-import '../../../domain/entites/location.dart';
-
 import 'package:dartz/dartz.dart';
 
 /// Gets the current location of the user

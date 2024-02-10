@@ -4,7 +4,6 @@ import 'package:sqflite/sqflite.dart';
 
 class LocalFavoritesDbDataSource {
   Future<bool> addFavorite(String favoritePoint) async {
-    print('addFavorite: $favoritePoint');
     final db = await DBService.database;
     try {
       await db.insert(

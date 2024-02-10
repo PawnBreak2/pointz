@@ -1,9 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:pointz/features/points_in_map/domain/entities/point/marker_point_model.dart';
@@ -11,12 +9,10 @@ import 'package:pointz/common/presentation/controllers/points_in_map_favorite_po
 import 'package:pointz/features/points_in_map/presentation/controllers/points_in_map_marker_detail_provider.dart';
 import 'package:pointz/features/points_in_map/presentation/widgets/components/points_in_map_detail_bottom_sheet.dart';
 
-import 'package:pointz/features/splash-page/presentation/controllers/location_controller_provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../../../../common/presentation/controllers/is_loading_provider.dart';
 import '../../../../../common/presentation/widgets/scaffolds/main_scaffold.dart';
-import '../../../../splash-page/domain/entites/location.dart';
 import '../../controllers/points_in_map_marker_creation_provider.dart';
 import '../../../../../common/presentation/controllers/points_in_map_markers_list_provider.dart';
 import '../../utils/points_in_map_constants.dart';
@@ -75,8 +71,9 @@ class _MapPageState extends ConsumerState<MapPage> {
 
   void onMarkerTap(String markerId) async {
     Marker marker = ref
-        .read(markersListProvider)
+        .watch(markersListProvider)
         .firstWhere((element) => element.markerId.value == markerId);
+    print(marker);
     LatLng latLng = marker.position;
     MarkerPoint markerPoint = MarkerPoint(
         id: int.parse(marker.markerId.value),
@@ -94,12 +91,13 @@ class _MapPageState extends ConsumerState<MapPage> {
     localControllerInstance
         .animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
             target: latLng, zoom: MapPageConstants.defaultZoomLevel * 1.05)))
-        .whenComplete(() {
+        .whenComplete(() async {
       if (context.mounted) {
+        await localControllerInstance.showMarkerInfoWindow(MarkerId(markerId));
+
         showModalBottomSheet(
-            context: context, // This is the context before the async gap
+            context: context,
             builder: (BuildContext context) {
-              // This is a new context valid for the modal bottom sheet
               return BottomSheetForPointsDetail(
                   latLng: latLng, label: marker.infoWindow.title!);
             }).then((result) async {
@@ -112,9 +110,6 @@ class _MapPageState extends ConsumerState<MapPage> {
           if (result == null) {
             localControllerInstance.hideMarkerInfoWindow(MarkerId(markerId));
           } else if (result != null && result['isUpdate'] == true) {
-            await Future.delayed(const Duration(seconds: 3));
-            // This is to show the marker info window for a short time after the bottom sheet is closed
-            // Only for update operation
             localControllerInstance.hideMarkerInfoWindow(MarkerId(markerId));
           }
         });
@@ -128,8 +123,8 @@ class _MapPageState extends ConsumerState<MapPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('build');
     bool isLoading = ref.watch(isLoadingProvider);
-    print(ref.read(favoritesListProvider));
     Set<Marker> markersList = ref.watch(markersListProvider).map((e) {
       return Marker(
         markerId: e.markerId,
@@ -146,6 +141,7 @@ class _MapPageState extends ConsumerState<MapPage> {
                 : BitmapDescriptor.hueCyan),
       );
     }).toSet();
+    print(markersList.last);
     return MainScaffold(
       body: isLoading
           ? Center(
@@ -156,10 +152,7 @@ class _MapPageState extends ConsumerState<MapPage> {
               height: 100.h,
               child: GoogleMap(
                 mapToolbarEnabled: false,
-                cameraTargetBounds: CameraTargetBounds(LatLngBounds(
-                    southwest: LatLng(initialPosition.target.latitude,
-                        initialPosition.target.longitude),
-                    northeast: LatLng(50.0, 20.0))),
+
                 minMaxZoomPreference: const MinMaxZoomPreference(13, 15),
                 zoomControlsEnabled: false,
                 zoomGesturesEnabled: false,

@@ -41,7 +41,7 @@ class _BottomSheetForMapScreenState
     lat = widget.latLng.latitude;
     lng = widget.latLng.longitude;
 
-    SchedulerBinding.instance!.addPostFrameCallback((_) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
       ref.read(markerPointCreationProvider.notifier).setLatAndLng(lat, lng);
     });
 
@@ -50,21 +50,21 @@ class _BottomSheetForMapScreenState
     _controller = TextEditingController()
       ..addListener(() {
         if (_controller.text != ref.read(markerPointDetailProvider).label) {
-          SchedulerBinding.instance!.addPostFrameCallback((_) {
+          SchedulerBinding.instance.addPostFrameCallback((_) {
             ref
                 .read(markerPointDetailProvider.notifier)
                 .setLabel(_controller.text);
           });
         }
         if (_controller.text.isNotEmpty) {
-          SchedulerBinding.instance!.addPostFrameCallback((_) {
+          SchedulerBinding.instance.addPostFrameCallback((_) {
             ref
                 .read(isTextEmptyBeforeSavingProvider.notifier)
                 .update((state) => false);
           });
         }
         if (_controller.text != widget.label) {
-          SchedulerBinding.instance!.addPostFrameCallback((_) {
+          SchedulerBinding.instance.addPostFrameCallback((_) {
             ref
                 .read(isTextEqualDuringUpdateProvider.notifier)
                 .update((state) => false);
@@ -136,7 +136,7 @@ class _BottomSheetForMapScreenState
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.location_on),
+                    const Icon(Icons.location_on),
                     Text(widget.latLng.longitude.toString().substring(0, 7)),
                     VerticalDivider(indent: 2.h, endIndent: 2.h),
                     Text(widget.latLng.latitude.toString().substring(0, 7)),
@@ -155,10 +155,11 @@ class _BottomSheetForMapScreenState
                       ref.watch(isTextEmptyBeforeSavingProvider);
                   bool isTextEqualDuringUpdate =
                       ref.watch(isTextEqualDuringUpdateProvider);
+                  print(_controller.text);
                   return Consumer(
                     builder: (context, ref, child) {
                       _controller.text =
-                          ref.read(markerPointDetailProvider).label;
+                          ref.watch(markerPointDetailProvider).label;
                       return Builder(builder: (context) {
                         String labelText = '';
                         if (isTextEqualDuringUpdate) {
@@ -172,7 +173,7 @@ class _BottomSheetForMapScreenState
                             decoration: InputDecoration(
                                 labelStyle: (isTextEmptyBeforeSaving ||
                                         isTextEqualDuringUpdate)
-                                    ? TextStyle(color: Colors.blueGrey)
+                                    ? const TextStyle(color: Colors.blueGrey)
                                     : null,
                                 focusedBorder: (isTextEmptyBeforeSaving ||
                                         isTextEqualDuringUpdate)
@@ -180,8 +181,8 @@ class _BottomSheetForMapScreenState
                                         .inputDecorationTheme
                                         .enabledBorder!
                                         .copyWith(
-                                            borderSide:
-                                                BorderSide(color: Colors.red))
+                                            borderSide: const BorderSide(
+                                                color: Colors.red))
                                     : null,
                                 labelText: labelText),
                             controller: _controller);
@@ -245,11 +246,11 @@ class _BottomSheetForMapScreenState
                                     .toString();
                                 onPressedDeleteButton(markerIdToDelete);
                               },
-                              child: Icon(Icons.delete_forever_rounded),
+                              child: const Icon(Icons.delete_forever_rounded),
                             )),
                       ],
                     )
-                  : SizedBox(),
+                  : const SizedBox(),
             ),
             const Expanded(flex: 2, child: SizedBox()),
           ],

@@ -15,7 +15,7 @@ class PointzTheme {
           style: ButtonStyle(
             foregroundColor: MaterialStateProperty.all(Colors.black),
             side: MaterialStateProperty.all(
-              BorderSide(
+              const BorderSide(
                 color: Colors.black,
                 width: 3,
               ),
@@ -37,14 +37,14 @@ class PointzTheme {
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(
+            borderSide: const BorderSide(
               color: Colors.black,
               width: 1,
             ),
           ),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(
+              borderSide: const BorderSide(
                 color: Colors.teal,
                 width: 1,
               )),

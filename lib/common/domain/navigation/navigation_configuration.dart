@@ -10,7 +10,7 @@ import 'navigation_map.dart';
 
 class NavigationConfiguration {
   static final GoRouter routes = GoRouter(
-    debugLogDiagnostics: true,
+    debugLogDiagnostics: false,
     initialLocation: '/',
     routes: [
       GoRoute(

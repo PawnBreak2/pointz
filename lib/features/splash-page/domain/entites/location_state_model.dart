@@ -1,8 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
 
-import 'location.dart';
-
 part 'location_state_model.freezed.dart';
 
 @freezed

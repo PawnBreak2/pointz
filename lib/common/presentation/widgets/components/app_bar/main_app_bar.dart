@@ -20,6 +20,7 @@ class MainAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      centerTitle: true,
       leading: (isOpaque && leading == null)
           ? IconButton(
               icon: const Icon(Icons.arrow_back),
@@ -38,7 +39,7 @@ class MainAppBar extends StatelessWidget {
                   customBorder: const CircleBorder(),
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 2.h),
-                    child: ButtonForPointsList(),
+                    child: const ButtonForPointsList(),
                   )),
             ]
           : [],

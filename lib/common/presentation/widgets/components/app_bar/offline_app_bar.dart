@@ -15,6 +15,7 @@ class OfflineAppBar extends StatelessWidget {
     print('building');
     print(leading);
     return AppBar(
+      centerTitle: true,
       leading: Padding(
         padding: EdgeInsets.symmetric(horizontal: 3.w),
         child: leading,
@@ -28,7 +29,7 @@ class OfflineAppBar extends StatelessWidget {
             customBorder: const CircleBorder(),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 2.h),
-              child: ButtonForPointsList(),
+              child: const ButtonForPointsList(),
             )),
       ],
       backgroundColor: Colors.white,

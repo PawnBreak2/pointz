@@ -1,12 +1,10 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pointz/common/presentation/controllers/local_points_db_provider.dart';
 import 'package:pointz/common/presentation/controllers/static_maps_provider.dart';
 import 'package:pointz/common/presentation/controllers/points_in_map_favorite_points_provider.dart';
-import 'package:pointz/features/points_in_map/presentation/controllers/points_in_map_marker_detail_provider.dart';
 
 import '../../../features/points_in_map/domain/entities/point/marker_point_model.dart';
 import '../../../features/points_in_map/presentation/controllers/points_in_map_marker_creation_provider.dart';
@@ -70,7 +68,8 @@ class RemoteApiNotifier extends Notifier<NetworkRequestState> {
     resp.fold((exception) {
       state = state.copyWith(
           errorMessage: exception.message, isError: true, data: null);
-    }, (data) {
+    }, (data) async {
+      List<Future> mapSnapshotsToGet = [];
       state = state.copyWith(isError: false, errorMessage: null, data: data);
       List<MarkerPoint> markerPointsToBeConverted = List.from(state.data);
       Set<Marker> mapMarkersToAdd = markerPointsToBeConverted
@@ -82,6 +81,12 @@ class RemoteApiNotifier extends Notifier<NetworkRequestState> {
               ))
           .toSet();
       ref.read(markersListProvider.notifier).addMarkersList(mapMarkersToAdd);
+      for (MarkerPoint markerPoint in markerPointsToBeConverted) {
+        mapSnapshotsToGet.add(ref
+            .read(staticMapsProvider.notifier)
+            .getMapScreenshot(markerPoint.id.toString()));
+      }
+      await Future.wait(mapSnapshotsToGet);
       clearState();
     });
   }

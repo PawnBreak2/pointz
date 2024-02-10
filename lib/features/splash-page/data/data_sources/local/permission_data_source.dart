@@ -1,7 +1,5 @@
 import 'package:geolocator/geolocator.dart';
 
-import '../../../domain/entites/location.dart';
-
 class PermissionDataSource {
   Future<bool> _checkPermission() async {
     final permission = await Geolocator.checkPermission();
