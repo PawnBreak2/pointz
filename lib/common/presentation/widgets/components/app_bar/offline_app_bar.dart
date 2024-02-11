@@ -12,8 +12,6 @@ class OfflineAppBar extends StatelessWidget {
   Widget? leading;
   @override
   Widget build(BuildContext context) {
-    print('building');
-    print(leading);
     return AppBar(
       centerTitle: true,
       leading: Padding(

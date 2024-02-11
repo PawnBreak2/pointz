@@ -41,7 +41,6 @@ class _OfflineMapPageState extends ConsumerState<OfflineMapPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(offlinePoints);
     return OpaqueScaffold(
         isOffline: true,
         leading: IconButton(

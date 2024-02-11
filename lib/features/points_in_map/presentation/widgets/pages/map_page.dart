@@ -1,12 +1,11 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:pointz/features/points_in_map/domain/entities/point/marker_point_model.dart';
 import 'package:pointz/common/presentation/controllers/points_in_map_favorite_points_provider.dart';
-import 'package:pointz/features/points_in_map/presentation/controllers/points_in_map_marker_detail_provider.dart';
 import 'package:pointz/features/points_in_map/presentation/widgets/components/points_in_map_detail_bottom_sheet.dart';
 
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -32,6 +31,7 @@ class _MapPageState extends ConsumerState<MapPage> {
 
   late CameraPosition initialPosition;
   double defaultZoomLevel = MapPageConstants.defaultZoomLevel;
+  List<Marker> markersList = [];
 
   @override
   void initState() {
@@ -59,30 +59,25 @@ class _MapPageState extends ConsumerState<MapPage> {
           context: context,
           builder: (BuildContext context) {
             return BottomSheetForCreatingPoints(latLng: latLng);
-          }).whenComplete(() {
-        localControllerInstance.animateCamera(CameraUpdate.newCameraPosition(
-            CameraPosition(target: latLng, zoom: previousZoomLevel)));
+          }).whenComplete(() async {
+        await localControllerInstance.animateCamera(
+            CameraUpdate.newCameraPosition(
+                CameraPosition(target: latLng, zoom: previousZoomLevel)));
         ref.invalidate(markerPointCreationProvider);
+        setState(() {});
       });
     }
   }
 
   /// Shows bottom sheet with details of the marker
 
-  void onMarkerTap(String markerId) async {
+  void onMarkerTap(String markerId, BuildContext context) async {
+    inspect(markersListProvider);
     Marker marker = ref
-        .watch(markersListProvider)
+        .read(markersListProvider)
         .firstWhere((element) => element.markerId.value == markerId);
-    print(marker);
     LatLng latLng = marker.position;
-    MarkerPoint markerPoint = MarkerPoint(
-        id: int.parse(marker.markerId.value),
-        label: marker.infoWindow.title!,
-        lat: latLng.latitude,
-        lng: latLng.longitude);
-    ref
-        .read(markerPointDetailProvider.notifier)
-        .populateMarkerPoint(markerPoint);
+
     final GoogleMapController localControllerInstance =
         await _controller.future;
 
@@ -98,20 +93,14 @@ class _MapPageState extends ConsumerState<MapPage> {
         showModalBottomSheet(
             context: context,
             builder: (BuildContext context) {
-              return BottomSheetForPointsDetail(
-                  latLng: latLng, label: marker.infoWindow.title!);
+              return BottomSheetForPointsDetail(latLng: latLng, id: markerId);
             }).then((result) async {
-          localControllerInstance.animateCamera(CameraUpdate.newCameraPosition(
-              CameraPosition(target: latLng, zoom: previousZoomLevel)));
-          ref.invalidate(markerPointDetailProvider);
-
-          // Bottom Sheet is dismissed by tapping on the background
-
-          if (result == null) {
-            localControllerInstance.hideMarkerInfoWindow(MarkerId(markerId));
-          } else if (result != null && result['isUpdate'] == true) {
-            localControllerInstance.hideMarkerInfoWindow(MarkerId(markerId));
-          }
+          await localControllerInstance.animateCamera(
+              CameraUpdate.newCameraPosition(
+                  CameraPosition(target: latLng, zoom: previousZoomLevel)));
+          await localControllerInstance
+              .hideMarkerInfoWindow(MarkerId(markerId));
+          setState(() {});
         });
       }
     });
@@ -123,14 +112,14 @@ class _MapPageState extends ConsumerState<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('build');
     bool isLoading = ref.watch(isLoadingProvider);
-    Set<Marker> markersList = ref.watch(markersListProvider).map((e) {
+
+    Set<Marker> markersList = ref.read(markersListProvider).map((e) {
       return Marker(
         markerId: e.markerId,
         position: e.position,
         onTap: () {
-          onMarkerTap(e.markerId.value);
+          onMarkerTap(e.markerId.value, context);
         },
         infoWindow: InfoWindow(
           title: e.infoWindow.title,
@@ -141,7 +130,6 @@ class _MapPageState extends ConsumerState<MapPage> {
                 : BitmapDescriptor.hueCyan),
       );
     }).toSet();
-    print(markersList.last);
     return MainScaffold(
       body: isLoading
           ? Center(

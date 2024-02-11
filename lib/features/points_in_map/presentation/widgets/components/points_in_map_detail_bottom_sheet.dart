@@ -4,26 +4,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pointz/common/presentation/controllers/points_in_map_favorite_points_provider.dart';
-import 'package:pointz/features/points_in_map/presentation/controllers/points_in_map_marker_detail_provider.dart';
 import 'package:pointz/features/points_in_map/presentation/utils/points_in_map_is_text_equal_during_updating.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../../../../common/presentation/controllers/points_management_provider.dart';
 import '../../../domain/entities/point/marker_point_model.dart';
-import '../../controllers/points_in_map_marker_creation_provider.dart';
 import '../../../../../common/presentation/controllers/points_in_map_markers_list_provider.dart';
 import '../../utils/points_in_map_is_text_empty_before_saving.dart';
 import '../../utils/points_in_map_strings.dart';
 
 class BottomSheetForPointsDetail extends ConsumerStatefulWidget {
   const BottomSheetForPointsDetail({
+    required this.id,
     required this.latLng,
-    required this.label,
     super.key,
   });
 
   final LatLng latLng;
-  final String label;
+  final String id;
 
   @override
   ConsumerState<BottomSheetForPointsDetail> createState() =>
@@ -35,27 +33,21 @@ class _BottomSheetForMapScreenState
   late TextEditingController _controller;
   late double lat;
   late double lng;
-
+  late String label;
   @override
   void initState() {
     lat = widget.latLng.latitude;
     lng = widget.latLng.longitude;
+    Marker marker = ref
+        .read(markersListProvider)
+        .firstWhere((element) => element.markerId.value == widget.id);
 
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      ref.read(markerPointCreationProvider.notifier).setLatAndLng(lat, lng);
-    });
+    label = marker.infoWindow.title!;
 
     ///TODO: move in method
 
-    _controller = TextEditingController()
+    _controller = TextEditingController(text: label)
       ..addListener(() {
-        if (_controller.text != ref.read(markerPointDetailProvider).label) {
-          SchedulerBinding.instance.addPostFrameCallback((_) {
-            ref
-                .read(markerPointDetailProvider.notifier)
-                .setLabel(_controller.text);
-          });
-        }
         if (_controller.text.isNotEmpty) {
           SchedulerBinding.instance.addPostFrameCallback((_) {
             ref
@@ -63,7 +55,7 @@ class _BottomSheetForMapScreenState
                 .update((state) => false);
           });
         }
-        if (_controller.text != widget.label) {
+        if (_controller.text != label) {
           SchedulerBinding.instance.addPostFrameCallback((_) {
             ref
                 .read(isTextEqualDuringUpdateProvider.notifier)
@@ -87,13 +79,17 @@ class _BottomSheetForMapScreenState
           .read(isTextEmptyBeforeSavingProvider.notifier)
           .update((state) => true);
       return;
-    } else if (_controller.text == widget.label) {
+    } else if (_controller.text == label) {
       ref
           .read(isTextEqualDuringUpdateProvider.notifier)
           .update((state) => true);
       return;
     } else {
-      MarkerPoint markerPointToUpdate = ref.read(markerPointDetailProvider);
+      MarkerPoint markerPointToUpdate = MarkerPoint(
+          id: int.parse(widget.id),
+          label: _controller.text,
+          lat: lat,
+          lng: lng);
 
       ref
           .read(isTextEmptyBeforeSavingProvider.notifier)
@@ -155,11 +151,8 @@ class _BottomSheetForMapScreenState
                       ref.watch(isTextEmptyBeforeSavingProvider);
                   bool isTextEqualDuringUpdate =
                       ref.watch(isTextEqualDuringUpdateProvider);
-                  print(_controller.text);
                   return Consumer(
                     builder: (context, ref, child) {
-                      _controller.text =
-                          ref.watch(markerPointDetailProvider).label;
                       return Builder(builder: (context) {
                         String labelText = '';
                         if (isTextEqualDuringUpdate) {
@@ -214,10 +207,7 @@ class _BottomSheetForMapScreenState
                           },
                           child: Consumer(
                             builder: (context, ref, child) {
-                              String markerIdToAddToFavorites = ref
-                                  .read(markerPointDetailProvider)
-                                  .id
-                                  .toString();
+                              String markerIdToAddToFavorites = widget.id;
                               bool isFavorite = ref
                                   .watch(favoritesListProvider)
                                   .any((element) =>
@@ -240,11 +230,7 @@ class _BottomSheetForMapScreenState
                             },
                             child: ElevatedButton(
                               onPressed: () {
-                                String markerIdToDelete = ref
-                                    .read(markerPointDetailProvider)
-                                    .id
-                                    .toString();
-                                onPressedDeleteButton(markerIdToDelete);
+                                onPressedDeleteButton(widget.id);
                               },
                               child: const Icon(Icons.delete_forever_rounded),
                             )),

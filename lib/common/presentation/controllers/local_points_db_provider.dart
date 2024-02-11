@@ -18,6 +18,7 @@ class LocalDbNotifier extends Notifier<LocalDbRequestState> {
           localPointsDbDataSource: LocalPointsDbDataSource());
 
   Future<bool> saveMarker(MarkerPoint markerPoint) async {
+    print(markerPoint);
     state = state.copyWith(isLoading: true);
     final success = await _localPointsDbRepository.saveMarker(markerPoint);
 

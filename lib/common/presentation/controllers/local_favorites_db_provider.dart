@@ -20,7 +20,6 @@ class LocalFavoritesNotifier extends Notifier<LocalDbRequestState> {
 
     if (success) {
       state = state.copyWith(isLoading: false, isError: false);
-      print('added favorite $id to local db');
       return true;
     } else {
       state = state.copyWith(isLoading: false, isError: true, data: null);
@@ -34,7 +33,6 @@ class LocalFavoritesNotifier extends Notifier<LocalDbRequestState> {
 
     if (success) {
       state = state.copyWith(isLoading: false, isError: false);
-      print('removed favorite $id from local db');
       return true;
     } else {
       state = state.copyWith(isLoading: false, isError: true, data: null);
@@ -51,8 +49,6 @@ class LocalFavoritesNotifier extends Notifier<LocalDbRequestState> {
             state = state.copyWith(isLoading: false, isError: true, data: null),
         (data) {
       state = state.copyWith(isLoading: false, isError: false, data: data);
-      print('got favorites from local db');
-      print(data);
       ref.read(favoritesListProvider.notifier).setAllFavorites(data);
     });
   }

@@ -41,9 +41,12 @@ class RemoteApiNotifier extends Notifier<NetworkRequestState> {
         infoWindow: InfoWindow(title: title),
         position: position,
       );
+
+      MarkerPoint markerPointToAddToDb = markerPointToSave.copyWith(id: id);
+
       bool localDbResp = await ref
           .read(localDbProvider.notifier)
-          .saveMarker(markerPointToSave);
+          .saveMarker(markerPointToAddToDb);
       if (localDbResp) {
         ref.read(markersListProvider.notifier).addMarker(markerToAddToList);
         await ref.read(staticMapsProvider.notifier).saveMapScreenshot(
@@ -81,12 +84,19 @@ class RemoteApiNotifier extends Notifier<NetworkRequestState> {
               ))
           .toSet();
       ref.read(markersListProvider.notifier).addMarkersList(mapMarkersToAdd);
-      for (MarkerPoint markerPoint in markerPointsToBeConverted) {
+
+      ///TODO: add functionality to get map snapshots and save markers in the local file system if not already present
+      ///for users that access the app on different devices and/or after deleting the app data
+
+      /*  for (MarkerPoint markerPoint in markerPointsToBeConverted) {
+        String id = markerPoint.id.toString();
+        double lat = markerPoint.lat;
+        double lng = markerPoint.lng;
         mapSnapshotsToGet.add(ref
             .read(staticMapsProvider.notifier)
-            .getMapScreenshot(markerPoint.id.toString()));
+            .saveMapScreenshot(id: id, lat: lat, lng: lng));
       }
-      await Future.wait(mapSnapshotsToGet);
+      await Future.wait(mapSnapshotsToGet);*/
       clearState();
     });
   }
@@ -141,7 +151,7 @@ class RemoteApiNotifier extends Notifier<NetworkRequestState> {
           infoWindow: InfoWindow(title: title),
           position: position,
         );
-        ref.read(markersListProvider.notifier).addMarker(mapMarkerToUpdate);
+        ref.read(markersListProvider.notifier).updateMarker(mapMarkerToUpdate);
         clearState();
       } else {
         state = state.copyWith(

@@ -17,8 +17,6 @@ class OpaqueScaffold extends StatelessWidget {
   bool isOffline;
   @override
   Widget build(BuildContext context) {
-    print(leading);
-    isOffline ? print('offline') : print('not offline');
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: PreferredSize(

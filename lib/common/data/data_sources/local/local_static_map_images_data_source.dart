@@ -22,6 +22,7 @@ class LocalStaticMapImagesDataSource {
       await file.writeAsBytes(imageFile);
       return true;
     } catch (e) {
+      print(e);
       return false;
     }
   }
@@ -54,15 +55,14 @@ class LocalStaticMapImagesDataSource {
       String mapImagesDirectoryPath =
           '$documentsDirectoryPath/${PathStrings.staticMapImagesFsPath}';
       String filePath = '$mapImagesDirectoryPath/$id.png';
-
       File file = File(filePath);
-
       if (await file.exists()) {
         return file;
       } else {
         return null;
       }
     } catch (e) {
+      print(e);
       return null;
     }
   }
